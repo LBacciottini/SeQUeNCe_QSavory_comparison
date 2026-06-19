@@ -1,6 +1,19 @@
 #!/usr/bin/env julia
 using SeQUeNCeQSavoryComparison
 
+function _print_help()
+    println("""
+    usage: run_qsavory.jl [--config CONFIG] --seed SEED --output OUTPUT [--raw-state-model MODEL]
+
+    optional arguments:
+      -h, --help                 show this help message and exit
+      --config CONFIG            shared TOML config path, default shared/configs/default.toml
+      --seed SEED                integer random seed
+      --output OUTPUT            output directory
+      --raw-state-model MODEL    exact or werner, default exact
+    """)
+end
+
 function _argvalue(args, name, default=nothing)
     idx = findfirst(==(name), args)
     isnothing(idx) && return default
@@ -8,8 +21,16 @@ function _argvalue(args, name, default=nothing)
     return args[idx + 1]
 end
 
-config = _argvalue(ARGS, "--config", "configs/default.toml")
-seed = parse(Int, _argvalue(ARGS, "--seed"))
+if "-h" in ARGS || "--help" in ARGS
+    _print_help()
+    exit(0)
+end
+
+config = _argvalue(ARGS, "--config", "shared/configs/default.toml")
+seed_arg = _argvalue(ARGS, "--seed")
 output = _argvalue(ARGS, "--output")
+isnothing(seed_arg) && error("missing required --seed")
+isnothing(output) && error("missing required --output")
+seed = parse(Int, seed_arg)
 raw_state_model = _argvalue(ARGS, "--raw-state-model", "exact")
 run_qsavory(config, seed, output; raw_state_model)

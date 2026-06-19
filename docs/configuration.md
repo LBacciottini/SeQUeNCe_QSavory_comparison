@@ -1,6 +1,6 @@
 # Configuration Reference
 
-The canonical shared configuration is `configs/default.toml`. It is the only
+The canonical shared configuration is `shared/configs/default.toml`. It is the only
 place where experiment, hardware, and output parameters should be authored by
 hand. Both simulator adapters must read this file through `resolve_config`,
 which validates the authored fields and appends a simulator-agnostic `derived`

@@ -5,13 +5,16 @@ configuration than the shared TOML file specifies.
 
 ## Test Layout
 
-The repository has both `tests/` and `test/` because the two languages use
-different defaults:
+The repository keeps each language's tests inside that language's package
+boundary:
 
-- `tests/` is the Python test suite. It is discovered with
-  `python3 -m unittest discover -s tests -p 'test_*.py'`.
-- `test/` is the Julia package test suite. Julia's package manager expects
-  `test/runtests.jl` when running `julia --project=. -e 'using Pkg; Pkg.test()'`.
+- `python/tests/` is the Python test suite. From `python/`, it is discovered
+  with `PYTHONPATH=src python3 -m unittest discover -s tests -p 'test_*.py'`
+  when the package is not installed editable.
+- `julia/SeQUeNCeQSavoryComparison/test/` is the Julia package test suite.
+  Julia's package manager expects `test/runtests.jl` relative to the active
+  package project, so it is run with
+  `julia --project=julia/SeQUeNCeQSavoryComparison -e 'using Pkg; Pkg.test()'`.
 
 ## Common Tests
 
@@ -34,7 +37,8 @@ plain Python environment and runs when `sequenceEnv` can import SeQUeNCe and its
 dependencies:
 
 ```bash
-conda run -n sequenceEnv python -m unittest discover -s tests -p 'test_*.py'
+cd python
+PYTHONPATH=src conda run -n sequenceEnv python -m unittest discover -s tests -p 'test_*.py'
 ```
 
 ## Component Tests
@@ -97,7 +101,7 @@ RUN_SLOW_SIM_TESTS=1 conda run -n sequenceEnv python -m unittest tests.test_sequ
 Run QuantumSavory's optional validation:
 
 ```bash
-RUN_SLOW_SIM_TESTS=1 julia --project=. -e 'using Pkg; Pkg.test()'
+RUN_SLOW_SIM_TESTS=1 julia --project=julia/SeQUeNCeQSavoryComparison -e 'using Pkg; Pkg.test()'
 ```
 
 Both optional tests accept `ELEMENTARY_TEST_TRIALS` and

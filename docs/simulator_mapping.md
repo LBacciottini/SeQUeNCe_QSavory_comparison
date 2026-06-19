@@ -1,7 +1,7 @@
 # Simulator Mapping Reference
 
 This page is the reference for how the shared configuration in
-`configs/default.toml` is translated into SeQUeNCe and QuantumSavory objects.
+`shared/configs/default.toml` is translated into SeQUeNCe and QuantumSavory objects.
 All simulator parameters must come from either the authored TOML fields or the
 derived values produced by `resolve_config`.
 
@@ -207,7 +207,8 @@ both adapters.
 
 SeQUeNCe is used as a lower-level event-driven model with explicit quantum
 routers, BSM nodes, optical channels, detector templates, resource-manager
-rules, and protocol instances. The adapter code is in `src/sequence_impl`.
+rules, and protocol instances. The adapter code is in
+`python/src/sequence_qsavory_comparison/sequence`.
 
 | Shared value | SeQUeNCe target | Mapping and rationale |
 | --- | --- | --- |
@@ -252,8 +253,9 @@ The SeQUeNCe applied mapping is machine-checkable with
 QuantumSavory is used as a higher-level analytical/state-based model. The
 adapter constructs registers, analytical raw-pair states, asynchronous
 ProtocolZoo processes, and tag-based endpoint metadata. The adapter code is in
-`src/SeQUeNCeQSavoryComparison.jl`. Each QuantumSavory experiment is run in
-two raw-state variants:
+`julia/SeQUeNCeQSavoryComparison/src/quantumsavory`, with shared Julia config,
+physics, I/O, and summary helpers in `julia/SeQUeNCeQSavoryComparison/src`.
+Each QuantumSavory experiment is run in two raw-state variants:
 
 - `qsavory_exact`, using the full analytical `BarrettKokBellPair`;
 - `qsavory_werner`, using `DepolarizedBellPair` with the same raw fidelity.
