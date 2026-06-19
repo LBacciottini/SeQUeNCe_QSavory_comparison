@@ -1,2 +1,12 @@
 .agents/
 AGENTS.md
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+Manifest.toml
+test/Manifest.toml
+outputs/
+results/
+data/generated/

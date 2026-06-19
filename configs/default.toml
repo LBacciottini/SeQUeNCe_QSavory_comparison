@@ -1,0 +1,84 @@
+# Canonical shared configuration for the three-node repeater cross-validation.
+# All times are seconds unless the field name explicitly says otherwise.
+
+[experiment]
+name = "three_node_resource_management"
+runtime_s = 10.0
+seed_start = 1
+seed_count = 3
+completion_check_interval_s = 0.001
+stop_on_completion = false
+
+[paths]
+# These paths are intentionally configurable so release code does not import
+# from ignored agent assets unless the user explicitly points there.
+sequence_path = ".agents/codebases/SeQUeNCe"
+quantumsavory_path = ".agents/codebases/QuantumSavory.jl"
+
+[topology]
+node_names = ["r1", "r2", "r3"]
+bsm_names = ["m12", "m23"]
+link_length_km = 10.0
+signal_speed_km_per_s = 200000.0
+
+[memories]
+r1_count = 20
+r2_count = 40
+r3_count = 10
+excitation_time_s = 0.0
+emission_efficiency = 1.0
+wavelength_nm = 500
+
+[optics]
+attenuation_db_per_km = 0.2
+collection_efficiency = 0.5
+frequency_conversion_efficiency = 1.0
+quantum_channel_frequency_hz = 80000000.0
+
+[detectors]
+efficiency = 0.8
+dark_count_probability = 0.0005
+dark_count_rate_hz = 0.0
+count_rate_hz = 25000000.0
+time_resolution_ps = 150
+
+[barrett_kok]
+mode_matching_visibility = 0.99
+parity_bit = 0
+success_probability_model = "p_det_squared_over_2"
+protocol_gap_ps = 10
+
+[resource_reservation.flow1]
+name = "r1_r2_short"
+source = "r1"
+destination = "r2"
+target_pairs = 10
+fidelity_min = 0.0
+r1_slots = [0, 9]
+r2_slots = [0, 9]
+
+[resource_reservation.flow2]
+name = "r1_r3_long"
+source = "r1"
+destination = "r3"
+target_pairs = 10
+fidelity_min = 0.0
+r1_slots = [10, 19]
+r2_left_slots = [10, 19]
+r2_right_slots = [20, 29]
+r3_slots = [0, 9]
+
+[purification]
+enabled = true
+target_fidelity_policy = "raw_squared_plus_margin"
+target_fidelity_margin = 0.001
+pair_selection_policy = "first_available"
+
+[swapping]
+success_probability = 1.0
+local_busy_time_s = 0.0
+
+[outputs]
+manifest_filename = "manifest.json"
+pairs_filename = "pairs.csv"
+summary_filename = "summary.csv"
