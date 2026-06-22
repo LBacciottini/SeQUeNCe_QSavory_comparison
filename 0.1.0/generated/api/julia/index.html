@@ -1,0 +1,1648 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Cross-validation experiments between SeQUeNCe and QuantumSavory.">
+      
+      
+      
+      
+        <link rel="prev" href="../python/">
+      
+      
+        <link rel="next" href="../../../explanation/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Julia API - SeQUeNCe / QuantumSavory Cross Validation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#julia-api" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="SeQUeNCe / QuantumSavory Cross Validation" class="md-header__button md-logo" aria-label="SeQUeNCe / QuantumSavory Cross Validation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            SeQUeNCe / QuantumSavory Cross Validation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Julia API
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="SeQUeNCe / QuantumSavory Cross Validation" class="md-nav__button md-logo" aria-label="SeQUeNCe / QuantumSavory Cross Validation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    SeQUeNCe / QuantumSavory Cross Validation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../tutorials/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tutorials
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorials/first-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    First Comparison Run
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../how-to/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How-to Guides
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    How-to Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../how-to/run-simulators/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Run Simulators
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../how-to/run-batches-and-sweeps/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Run Batches and Sweeps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../how-to/generate-plots/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generate Plots
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../how-to/validate-agreement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validate Agreement
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../how-to/build-docs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build Documentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../running/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../reference/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shared Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Output Schema
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/parameter-mapping/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameter Mapping
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/testing-strategy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing Strategy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/vendored-simulators/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vendored Simulators
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generated Docs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generated API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../python/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Julia API
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Julia API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#index" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Index
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sequenceqsavorycomparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SeQUeNCeQSavoryComparison
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#derive_parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        derive_parameters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#elementary_rate_theory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        elementary_rate_theory
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inspect_qsavory_configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        inspect_qsavory_configuration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#load_config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        load_config
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resolve_config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        resolve_config
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run_qsavory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        run_qsavory
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run_qsavory_elementary_trials" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        run_qsavory_elementary_trials
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../explanation/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Explanation
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Explanation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../explanation/cross-validation-model/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cross-Validation Model
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../explanation/simulator-semantics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Simulator Semantics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../explanation/exact-and-werner-models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Exact and Werner Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#index" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Index
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sequenceqsavorycomparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SeQUeNCeQSavoryComparison
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#derive_parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        derive_parameters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#elementary_rate_theory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        elementary_rate_theory
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inspect_qsavory_configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        inspect_qsavory_configuration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#load_config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        load_config
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resolve_config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        resolve_config
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run_qsavory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        run_qsavory
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run_qsavory_elementary_trials" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        run_qsavory_elementary_trials
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<!--
+This file is generated. Do not edit it directly.
+Edit source docstrings, generator inputs, or this template instead.
+-->
+
+<h1 id="julia-api">Julia API<a class="headerlink" href="#julia-api" title="Permanent link">&para;</a></h1>
+<div class="admonition note">
+<p class="admonition-title">Generated reference</p>
+<p>This page is generated by <code>scripts/build_docs.py</code>.</p>
+</div>
+<p><strong>Language:</strong> Julia<br />
+<strong>Source:</strong> Exported docstrings from <code>SeQUeNCeQSavoryComparison</code>.</p>
+<p>The Julia API page is generated from exported package symbols using <code>scripts/generate_julia_api.jl</code>.</p>
+<h2 id="index">Index<a class="headerlink" href="#index" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="#symbol-sequenceqsavorycomparison"><code>SeQUeNCeQSavoryComparison</code></a></li>
+<li><a href="#symbol-derive-parameters"><code>derive_parameters</code></a></li>
+<li><a href="#symbol-elementary-rate-theory"><code>elementary_rate_theory</code></a></li>
+<li><a href="#symbol-inspect-qsavory-configuration"><code>inspect_qsavory_configuration</code></a></li>
+<li><a href="#symbol-load-config"><code>load_config</code></a></li>
+<li><a href="#symbol-resolve-config"><code>resolve_config</code></a></li>
+<li><a href="#symbol-run-qsavory"><code>run_qsavory</code></a></li>
+<li><a href="#symbol-run-qsavory-elementary-trials"><code>run_qsavory_elementary_trials</code></a></li>
+</ul>
+<p><a id="symbol-sequenceqsavorycomparison"></a></p>
+<h2 id="sequenceqsavorycomparison"><code>SeQUeNCeQSavoryComparison</code><a class="headerlink" href="#sequenceqsavorycomparison" title="Permanent link">&para;</a></h2>
+<p>SeQUeNCeQSavoryComparison</p>
+<p>Cross-validation utilities for comparing the SeQUeNCe resource-management
+  tutorial scenario with an analogous QuantumSavory implementation.</p>
+<p>The package reads the shared TOML configuration, derives
+  simulator-independent Barrett-Kok timing and fidelity quantities, runs the
+  QuantumSavory simulator variants, and writes the same manifest/CSV schema
+  used by the Python SeQUeNCe adapter.</p>
+<p><a id="symbol-derive-parameters"></a></p>
+<h2 id="derive_parameters"><code>derive_parameters</code><a class="headerlink" href="#derive_parameters" title="Permanent link">&para;</a></h2>
+<p>derive_parameters(cfg) -&gt; Dict{String,Any}</p>
+<p>Compute simulator-agnostic derived parameters.</p>
+<p>This function is the single source of truth for quantities shared by the
+  SeQUeNCe and QuantumSavory implementations: half-link loss, arm
+  transmissivity, Barrett-Kok success probability, SeQUeNCe-equivalent
+  per-attempt timing, expected elementary-link generation rate, raw fidelity,
+  and the purification target threshold.</p>
+<p>The Barrett-Kok timing mirrors the SeQUeNCe source-level protocol sequence.
+  A logical attempt can terminate after round 1 unless the round-1 herald
+  permits round 2, so the effective attempt time is round1_time_s +
+  round2_entry_probability * round2_time_s.</p>
+<p>Arguments
+  ≡≡≡≡≡≡≡≡≡</p>
+<pre><code>•  cfg: Shared configuration dictionary that has passed
+   validate_config.
+</code></pre>
+<p>Returns
+  ≡≡≡≡≡≡≡</p>
+<p>A dictionary containing derived physical quantities in seconds/meters and
+  SeQUeNCe timeline quantities in picoseconds.</p>
+<p>Examples
+  ≡≡≡≡≡≡≡≡</p>
+<p>cfg = load_config("configs/default.toml")
+  derived = derive_parameters(cfg)
+  derived["barrett_kok_effective_attempt_time_s"]</p>
+<p><a id="symbol-elementary-rate-theory"></a></p>
+<h2 id="elementary_rate_theory"><code>elementary_rate_theory</code><a class="headerlink" href="#elementary_rate_theory" title="Permanent link">&para;</a></h2>
+<p>elementary_rate_theory(cfg) -&gt; Dict{String,Any}</p>
+<p>Return asymptotic Barrett-Kok elementary-link generation-rate expectations.</p>
+<p>The optional slow validation tests compare many first-success
+  elementary-link trials against these expectations. The rate is computed from
+  the shared effective attempt time and full two-round success probability,
+  not from a fixed two-round duration.</p>
+<p>Arguments
+  ≡≡≡≡≡≡≡≡≡</p>
+<pre><code>•  cfg: Shared configuration dictionary.
+</code></pre>
+<p>Returns
+  ≡≡≡≡≡≡≡</p>
+<p>A dictionary with success probability, effective attempt time, expected
+  rate, expected mean first-success time, and expected raw fidelity.</p>
+<p>Examples
+  ≡≡≡≡≡≡≡≡</p>
+<p>theory = elementary_rate_theory(load_config("configs/default.toml"))
+  theory["expected_mean_completion_time_s"] == 1 / theory["expected_rate_hz"]</p>
+<p><a id="symbol-inspect-qsavory-configuration"></a></p>
+<h2 id="inspect_qsavory_configuration"><code>inspect_qsavory_configuration</code><a class="headerlink" href="#inspect_qsavory_configuration" title="Permanent link">&para;</a></h2>
+<p>inspect_qsavory_configuration(cfg; raw_state_model="exact") -&gt; Dict{String,Any}</p>
+<p>Return the exact QuantumSavory settings implied by the shared config.</p>
+<p>The returned dictionary is written to each QuantumSavory manifest under
+  applied_config. It exposes the simulator-specific interpretation of the
+  shared config: register sizes, slot reservations, raw-pair state class,
+  EntanglerProt timing/probability, distillation scope, and ideal-swapping
+  policy.</p>
+<p>Arguments
+  ≡≡≡≡≡≡≡≡≡</p>
+<pre><code>•  cfg: Shared configuration dictionary.
+•  raw_state_model: "exact" for BarrettKokBellPair or "werner" for
+   DepolarizedBellPair.
+</code></pre>
+<p>Returns
+  ≡≡≡≡≡≡≡</p>
+<p>A manifest-safe dictionary containing only JSON-serializable values.</p>
+<p>Examples
+  ≡≡≡≡≡≡≡≡</p>
+<p>cfg = load_config("configs/default.toml")
+  applied = inspect_qsavory_configuration(cfg; raw_state_model="werner")
+  applied["raw_state"]["class"] == "DepolarizedBellPair"</p>
+<p><a id="symbol-load-config"></a></p>
+<h2 id="load_config"><code>load_config</code><a class="headerlink" href="#load_config" title="Permanent link">&para;</a></h2>
+<p>load_config(path::AbstractString) -&gt; Dict</p>
+<p>Read a shared TOML config file.</p>
+<p>Relative paths are resolved from the current directory first and then by
+  walking up parent directories. This lets CLI scripts be launched from the
+  repository root, the Julia package directory, or a test directory while
+  still referring to configs/default.toml.</p>
+<p>Arguments
+  ≡≡≡≡≡≡≡≡≡</p>
+<pre><code>•  path: TOML file path.
+</code></pre>
+<p>Returns
+  ≡≡≡≡≡≡≡</p>
+<p>A nested dictionary produced by TOML.parsefile.</p>
+<p>Examples
+  ≡≡≡≡≡≡≡≡</p>
+<p>cfg = load_config("configs/default.toml")
+  cfg["topology"]["link_length_km"]</p>
+<p><a id="symbol-resolve-config"></a></p>
+<h2 id="resolve_config"><code>resolve_config</code><a class="headerlink" href="#resolve_config" title="Permanent link">&para;</a></h2>
+<p>resolve_config(cfg) -&gt; Dict{String,Any}</p>
+<p>Return a copied config with a derived table.</p>
+<p>The input dictionary is validated and deep-copied before derived physical
+  and timing parameters are added. Callers can therefore keep the authored
+  config as a clean snapshot while using the resolved copy for simulator setup.</p>
+<p>Arguments
+  ≡≡≡≡≡≡≡≡≡</p>
+<pre><code>•  cfg: Shared configuration dictionary.
+</code></pre>
+<p>Returns
+  ≡≡≡≡≡≡≡</p>
+<p>A deep copy of cfg with resolved["derived"] populated by derive_parameters.</p>
+<p>Examples
+  ≡≡≡≡≡≡≡≡</p>
+<p>resolved = resolve_config(load_config("configs/default.toml"))
+  resolved["derived"]["barrett_kok_expected_rate_hz"]</p>
+<p><a id="symbol-run-qsavory"></a></p>
+<h2 id="run_qsavory"><code>run_qsavory</code><a class="headerlink" href="#run_qsavory" title="Permanent link">&para;</a></h2>
+<p>run_qsavory(config_path, seed, output_dir; raw_state_model="exact") -&gt; Dict</p>
+<p>Run the QuantumSavory analytical-Barrett-Kok implementation and write
+  outputs.</p>
+<p>The runner builds a three-register RegisterNet, starts one EntanglerProt per
+  reserved memory lane, runs SwapperProt at the middle node, and runs
+  BBPSSWProt only between the end nodes r1 and r3. The elementary entanglers
+  use the shared effective Barrett-Kok attempt time and full-success
+  probability derived from the same configuration used by the SeQUeNCe adapter.</p>
+<p>Two raw-state models are supported:</p>
+<pre><code>•  "exact" uses BarrettKokBellPair with the derived optical
+   parameters.
+•  "werner" uses DepolarizedBellPair with the same raw fidelity,
+   giving a Werner-state abstraction that can be compared directly to
+   SeQUeNCe's BDS representation.
+</code></pre>
+<p>Arguments
+  ≡≡≡≡≡≡≡≡≡</p>
+<pre><code>•  config_path: Path to the shared TOML configuration.
+•  seed: Random seed for QuantumSavory and Julia's global RNG.
+•  output_dir: Directory where pairs.csv, summary.csv, and
+   manifest.json are written.
+•  raw_state_model: "exact" or "werner".
+</code></pre>
+<p>Returns
+  ≡≡≡≡≡≡≡</p>
+<p>A dictionary containing the in-memory manifest, pairs, and summary objects
+  that were also written to disk.</p>
+<p>Examples
+  ≡≡≡≡≡≡≡≡</p>
+<p>result = run_qsavory(
+      "configs/default.toml",
+      7,
+      "results/qsavory_exact/seed_7";
+      raw_state_model="exact",
+  )
+  result["summary"]["simulator"] == "qsavory_exact"</p>
+<p><a id="symbol-run-qsavory-elementary-trials"></a></p>
+<h2 id="run_qsavory_elementary_trials"><code>run_qsavory_elementary_trials</code><a class="headerlink" href="#run_qsavory_elementary_trials" title="Permanent link">&para;</a></h2>
+<p>run_qsavory_elementary_trials(config_path; seed, trials, timeout_s,
+                                output_dir=nothing, raw_state_model="exact")</p>
+<p>Run independent elementary Barrett-Kok validation trials in QuantumSavory.</p>
+<p>Each trial creates a fresh two-node RegisterNet with one memory per node and
+  one EntanglerProt. The entangler uses the shared Barrett-Kok full-success
+  probability and SeQUeNCe-equivalent effective attempt time, so the slow
+  validation layer checks that QuantumSavory's elementary-link abstraction has
+  the same asymptotic first-success rate and raw fidelity as the shared theory.</p>
+<p>Arguments
+  ≡≡≡≡≡≡≡≡≡</p>
+<pre><code>•  config_path: Path to the shared TOML configuration.
+•  seed: Base random seed. Each trial receives a deterministic offset.
+•  trials: Number of independent first-success experiments.
+•  timeout_s: Maximum simulated time per trial, in seconds.
+•  output_dir: Optional directory where elementary_trials.csv is
+   written.
+•  raw_state_model: "exact" for BarrettKokBellPair or "werner" for
+   DepolarizedBellPair.
+</code></pre>
+<p>Returns
+  ≡≡≡≡≡≡≡</p>
+<p>A vector of row dictionaries with observed success, completion time,
+  fidelity, and theoretical rate/fidelity columns.</p>
+<p>Examples
+  ≡≡≡≡≡≡≡≡</p>
+<p>rows = run_qsavory_elementary_trials(
+      "configs/default.toml";
+      seed=1,
+      trials=10,
+      timeout_s=1.0,
+      raw_state_model="exact",
+  )
+  rows[1]["simulator"]</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.indexes", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

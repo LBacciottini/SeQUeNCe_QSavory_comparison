@@ -1,0 +1,26 @@
+{
+  "generated_at": "2026-06-22T19:13:30.255018+00:00",
+  "generator": "scripts/build_docs.py",
+  "julia_project": "julia/SeQUeNCeQSavoryComparison",
+  "outputs": {
+    "api_index": "docs/generated/api/index.md",
+    "index": "docs/generated/index.md",
+    "julia_api": "docs/generated/api/julia.md",
+    "python_api": "docs/generated/api/python.md"
+  },
+  "python_modules": [
+    "sequence_qsavory_comparison.common.config",
+    "sequence_qsavory_comparison.common.models",
+    "sequence_qsavory_comparison.common.outputs",
+    "sequence_qsavory_comparison.common.plotting",
+    "sequence_qsavory_comparison.common.validation",
+    "sequence_qsavory_comparison.cli.jobs",
+    "sequence_qsavory_comparison.cli.run_batch",
+    "sequence_qsavory_comparison.cli.run_sweep",
+    "sequence_qsavory_comparison.sequence.mapping",
+    "sequence_qsavory_comparison.sequence.simulation",
+    "sequence_qsavory_comparison.sequence.elementary"
+  ],
+  "schema_version": 1,
+  "template": "scripts/templates/api_page.md.tmpl"
+}
