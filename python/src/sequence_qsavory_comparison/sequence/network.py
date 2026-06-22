@@ -1,4 +1,10 @@
-"""SeQUeNCe network construction for the comparison scenario."""
+"""SeQUeNCe network construction for the comparison scenario.
+
+The adapter builds the three-router, two-midpoint topology from the shared
+configuration and installs only hardware-level parameters here.  Protocol rules
+are added later by :mod:`sequence_qsavory_comparison.sequence.simulation` so the
+network setup remains separable from resource-management policy.
+"""
 
 from __future__ import annotations
 
@@ -8,7 +14,22 @@ from .imports import SequenceImports
 
 
 def make_router_class(imports: SequenceImports, resolved: dict[str, Any]):
-    """Create a RouterNode class bound to this resolved configuration."""
+    """Create a ``QuantumRouter`` subclass bound to one resolved config.
+
+    The subclass sets memory-array parameters to the shared raw-fidelity,
+    excitation-frequency, and source-efficiency values, disables memory
+    decoherence/cutoff, and routes SeQUeNCe protocol messages to either the
+    resource manager or the named protocol instance.
+
+    Args:
+        imports: Bundle of SeQUeNCe classes returned by
+            :func:`sequence_qsavory_comparison.sequence.imports.import_sequence`.
+        resolved: Shared config after :func:`resolve_config`, including the
+            ``derived`` table.
+
+    Returns:
+        A router class ready to instantiate ``r1``, ``r2``, and ``r3``.
+    """
 
     raw_fidelity = resolved["derived"]["barrett_kok_raw_fidelity"]
     memory_frequency = resolved["derived"]["memory_frequency_hz"]
@@ -51,7 +72,26 @@ def make_router_class(imports: SequenceImports, resolved: dict[str, Any]):
 
 
 def build_network(resolved: dict[str, Any], imports: SequenceImports, seed: int) -> tuple[Any, Any, Any, Any]:
-    """Build the configured SeQUeNCe network and return timeline and routers."""
+    """Build the configured SeQUeNCe network and return timeline and routers.
+
+    Args:
+        resolved: Shared config after validation and derived-parameter
+            computation.
+        imports: Bundle of SeQUeNCe classes used to avoid module-level
+            SeQUeNCe imports.
+        seed: Base seed used to seed routers and midpoint BSM nodes
+            deterministically.
+
+    Returns:
+        ``(timeline, r1, r2, r3)``.  The midpoint nodes and channels are owned
+        by the SeQUeNCe timeline through component references and do not need to
+        be returned to the caller.
+
+    Example:
+        >>> resolved = resolve_config(cfg)  # doctest: +SKIP
+        >>> imports = import_sequence(resolved["paths"]["sequence_path"])  # doctest: +SKIP
+        >>> timeline, r1, r2, r3 = build_network(resolved, imports, seed=1)  # doctest: +SKIP
+    """
 
     derived = resolved["derived"]
     memories = resolved["memories"]

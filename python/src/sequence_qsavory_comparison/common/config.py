@@ -1,4 +1,9 @@
-"""Load and validate the shared TOML experiment configuration."""
+"""Load, validate, write, and resolve shared experiment configurations.
+
+The shared TOML file is the source of truth for both simulator adapters. This
+module deliberately returns plain dictionaries so the same shape can be written
+to JSON manifests and consumed by both Python tests and Julia cross-checks.
+"""
 
 from __future__ import annotations
 
@@ -29,7 +34,27 @@ REQUIRED_SECTIONS = (
 
 
 def load_config(path: str | pathlib.Path) -> dict[str, Any]:
-    """Read a TOML config file into plain Python dictionaries."""
+    """Read a TOML config file into plain Python dictionaries.
+
+    Args:
+        path: Absolute path, relative path, or repo-relative path to a shared
+            TOML configuration file.
+
+    Returns:
+        Parsed nested dictionaries using built-in TOML scalar types.
+
+    Raises:
+        FileNotFoundError: If the resolved path does not exist.
+        ValueError: If the Python 3.9 fallback parser sees unsupported TOML.
+
+    Example:
+        ```python
+        from sequence_qsavory_comparison.common.config import load_config
+
+        cfg = load_config("shared/configs/default.toml")
+        assert cfg["topology"]["link_length_km"] > 0
+        ```
+    """
 
     config_path = _resolve_input_path(path)
     if tomllib is not None:
@@ -39,7 +64,26 @@ def load_config(path: str | pathlib.Path) -> dict[str, Any]:
 
 
 def write_config(path: str | pathlib.Path, config: dict[str, Any]) -> None:
-    """Write a shared config TOML file using the supported scalar subset."""
+    """Write a shared config TOML file using the supported scalar subset.
+
+    This writer is used by sweep runners to materialize generated configs. It
+    supports the values used in the shared config schema: nested dictionaries,
+    booleans, strings, integers, floats, and one-line arrays.
+
+    Args:
+        path: Output TOML path. Parent directories are created automatically.
+        config: Nested config dictionary to serialize.
+
+    Raises:
+        TypeError: If a value cannot be represented by the supported subset.
+
+    Example:
+        ```python
+        cfg = load_config("shared/configs/default.toml")
+        cfg["topology"]["link_length_km"] = 20.0
+        write_config("outputs/link_020km/config.toml", cfg)
+        ```
+    """
 
     out = pathlib.Path(path)
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -97,7 +141,16 @@ def _parse_minimal_toml(text: str) -> dict[str, Any]:
 
     This fallback keeps Python 3.9 usable without an extra `tomli` dependency.
     It intentionally supports only tables, strings, booleans, integers, floats,
-    and one-line arrays of those scalar types.
+    and one-line arrays of those scalar types. It is not a general TOML parser.
+
+    Args:
+        text: TOML text in the restricted project subset.
+
+    Returns:
+        Nested dictionaries matching `tomllib.load` for supported files.
+
+    Raises:
+        ValueError: If a line or scalar value is outside the supported subset.
     """
 
     root: dict[str, Any] = {}
@@ -166,7 +219,27 @@ def _slot_count(slot_range: tuple[int, int]) -> int:
 
 
 def validate_config(config: dict[str, Any]) -> None:
-    """Validate fields that are required by both simulator adapters."""
+    """Validate fields that are required by both simulator adapters.
+
+    Validation is intentionally simulator-agnostic. It checks structural
+    requirements, probability bounds, positive-valued physical parameters,
+    non-overlapping memory reservations, equal lane counts for paired links,
+    and policy choices that the adapters currently support.
+
+    Args:
+        config: Parsed shared configuration without a `derived` section.
+
+    Raises:
+        ValueError: If required sections are missing, probabilities are outside
+            `[0, 1]`, lane ranges are invalid or overlapping, target pair
+            counts exceed reserved memories, or unsupported policies are used.
+
+    Example:
+        ```python
+        cfg = load_config("shared/configs/default.toml")
+        validate_config(cfg)
+        ```
+    """
 
     for section in REQUIRED_SECTIONS:
         if section not in config:
@@ -228,7 +301,28 @@ def validate_config(config: dict[str, Any]) -> None:
 
 
 def resolve_config(config: dict[str, Any]) -> dict[str, Any]:
-    """Return a deep-copied config with a simulator-agnostic `derived` section."""
+    """Return a deep-copied config with a simulator-agnostic `derived` section.
+
+    `resolve_config` is the required entry point for simulator adapters. It
+    validates authored fields, computes shared derived physical quantities, and
+    leaves the input dictionary unmodified.
+
+    Args:
+        config: Parsed shared configuration.
+
+    Returns:
+        A deep copy of `config` with `resolved["derived"]` populated.
+
+    Raises:
+        ValueError: If validation fails or any derived floating-point value is
+            non-finite.
+
+    Example:
+        ```python
+        resolved = resolve_config(load_config("shared/configs/default.toml"))
+        rate = resolved["derived"]["barrett_kok_expected_rate_hz"]
+        ```
+    """
 
     validate_config(config)
     resolved = copy.deepcopy(config)

@@ -1,3 +1,14 @@
+"""
+    SeQUeNCeQSavoryComparison
+
+Cross-validation utilities for comparing the [SeQUeNCe resource-management
+  tutorial scenario](https://sequence-rtd-tutorial.readthedocs.io/stable/tutorial/chapter4/resource_management.html) with an analogous QuantumSavory implementation.
+
+The package reads the shared TOML configuration, derives simulator-independent
+Barrett-Kok timing and fidelity quantities, runs the QuantumSavory simulator
+variants, and writes the same manifest/CSV schema used by the Python SeQUeNCe
+adapter.
+"""
 module SeQUeNCeQSavoryComparison
 
 using ConcurrentSim

@@ -1,4 +1,28 @@
-"""Read a shared TOML config file."""
+"""
+    load_config(path::AbstractString) -> Dict
+
+Read a shared TOML config file.
+
+Relative paths are resolved from the current directory first and then by walking
+up parent directories.  This lets CLI scripts be launched from the repository
+root, the Julia package directory, or a test directory while still referring to
+`configs/default.toml`.
+
+# Arguments
+
+- `path`: TOML file path.
+
+# Returns
+
+A nested dictionary produced by `TOML.parsefile`.
+
+# Examples
+
+```julia
+cfg = load_config("configs/default.toml")
+cfg["topology"]["link_length_km"]
+```
+"""
 load_config(path::AbstractString) = TOML.parsefile(_resolve_input_path(path))
 
 function _resolve_input_path(path::AbstractString)
@@ -29,7 +53,32 @@ end
 _overlap(a, b) = max(a[1], b[1]) <= min(a[2], b[2])
 _slot_count(a) = a[2] - a[1] + 1
 
-"""Validate fields required by both simulator adapters."""
+"""
+    validate_config(cfg) -> nothing
+
+Validate fields required by both simulator adapters.
+
+The validation layer checks that required sections exist, probability-like
+parameters are in `[0, 1]`, positive timing/length parameters are positive,
+reserved memory ranges are valid and non-overlapping, and the selected model
+choices match the assumptions implemented by the comparison code.
+
+# Arguments
+
+- `cfg`: Shared configuration dictionary.
+
+# Throws
+
+Throws `ArgumentError` when a required field is missing, a scalar is outside its
+allowed domain, or a resource-reservation range is inconsistent.
+
+# Examples
+
+```julia
+cfg = load_config("configs/default.toml")
+validate_config(cfg)
+```
+"""
 function validate_config(cfg)
     for section in (
         "experiment", "paths", "topology", "memories", "optics", "detectors",
@@ -83,7 +132,31 @@ function validate_config(cfg)
     return nothing
 end
 
-"""Return a copied config with a `derived` table."""
+"""
+    resolve_config(cfg) -> Dict{String,Any}
+
+Return a copied config with a `derived` table.
+
+The input dictionary is validated and deep-copied before derived physical and
+timing parameters are added.  Callers can therefore keep the authored config as
+a clean snapshot while using the resolved copy for simulator setup.
+
+# Arguments
+
+- `cfg`: Shared configuration dictionary.
+
+# Returns
+
+A deep copy of `cfg` with `resolved["derived"]` populated by
+[`derive_parameters`](@ref).
+
+# Examples
+
+```julia
+resolved = resolve_config(load_config("configs/default.toml"))
+resolved["derived"]["barrett_kok_expected_rate_hz"]
+```
+"""
 function resolve_config(cfg)
     validate_config(cfg)
     resolved = deepcopy(cfg)

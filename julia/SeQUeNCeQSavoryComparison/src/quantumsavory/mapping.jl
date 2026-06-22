@@ -1,4 +1,32 @@
-"""Return the exact QuantumSavory settings implied by the shared config."""
+"""
+    inspect_qsavory_configuration(cfg; raw_state_model="exact") -> Dict{String,Any}
+
+Return the exact QuantumSavory settings implied by the shared config.
+
+The returned dictionary is written to each QuantumSavory manifest under
+`applied_config`.  It exposes the simulator-specific interpretation of the
+shared config: register sizes, slot reservations, raw-pair state class,
+EntanglerProt timing/probability, distillation scope, and ideal-swapping
+policy.
+
+# Arguments
+
+- `cfg`: Shared configuration dictionary.
+- `raw_state_model`: `"exact"` for `BarrettKokBellPair` or `"werner"` for
+  `DepolarizedBellPair`.
+
+# Returns
+
+A manifest-safe dictionary containing only JSON-serializable values.
+
+# Examples
+
+```julia
+cfg = load_config("configs/default.toml")
+applied = inspect_qsavory_configuration(cfg; raw_state_model="werner")
+applied["raw_state"]["class"] == "DepolarizedBellPair"
+```
+"""
 function inspect_qsavory_configuration(cfg; raw_state_model="exact")
     resolved = resolve_config(cfg)
     flow1 = resolved["resource_reservation"]["flow1"]

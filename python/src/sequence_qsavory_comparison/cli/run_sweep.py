@@ -1,4 +1,11 @@
-"""Run seeded simulator batches while sweeping elementary-link length."""
+"""Run seeded simulator batches while sweeping elementary-link length.
+
+The sweep CLI materializes one generated config per link length under the
+chosen output root, records a sweep-level manifest, and schedules the same
+``(simulator variant, seed)`` jobs used by the batch runner for each link
+length.  The resulting directory tree is consumed directly by the plotting API
+when link length is the x-axis.
+"""
 
 from __future__ import annotations
 

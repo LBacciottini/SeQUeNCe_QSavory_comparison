@@ -33,7 +33,32 @@ def run_sequence_elementary_trials(
     timeout_s: float,
     output_dir: str | pathlib.Path | None = None,
 ) -> list[dict[str, Any]]:
-    """Run independent first-success elementary Barrett-Kok trials."""
+    """Run independent first-success elementary Barrett-Kok trials.
+
+    Each trial builds a fresh one-link SeQUeNCe network with a single reserved
+    memory pair and runs until the first successful Barrett-Kok generation or
+    the trial timeout.  The function reuses the production SeQUeNCe generation
+    rule actions, so validation exercises the same protocol wiring as full
+    comparison runs while excluding purification and swapping.
+
+    Args:
+        config: Shared configuration dictionary.
+        seed: Base seed.  Each trial receives a deterministic offset from this
+            value so trials are reproducible and independent.
+        trials: Number of independent first-success experiments to run.
+        timeout_s: Maximum simulated time for each trial, in seconds.
+        output_dir: Optional directory where ``elementary_trials.csv`` is
+            written.
+
+    Returns:
+        A list of row dictionaries with observed success, completion time,
+        fidelity, and the corresponding theoretical rate/fidelity columns.
+
+    Example:
+        >>> rows = run_sequence_elementary_trials(cfg, seed=1, trials=10, timeout_s=1.0)  # doctest: +SKIP
+        >>> rows[0].get("simulator")  # doctest: +SKIP
+        'sequence'
+    """
 
     trial_config = _trial_config(config, timeout_s)
     resolved = resolve_config(trial_config)

@@ -7,10 +7,10 @@ derived values produced by `resolve_config`.
 
 Related references:
 
-- `docs/configuration.md` describes the shared config sections.
+- `reference/configuration.md` describes the shared config sections.
 - `manifest.json` records `raw_config`, `resolved_config`, and
   `applied_config` for each run.
-- `docs/testing.md` lists the tests that compare applied simulator settings and
+- `reference/testing-strategy.md` lists the tests that compare applied simulator settings and
   elementary-link behavior against this mapping.
 
 ## Shared Derived Model
@@ -386,4 +386,4 @@ Use this checklist when reviewing a mapping change:
 - Every intentional modeling difference is named in this document.
 - `manifest.json.applied_config` contains enough information to audit the
   realized simulator settings after a run.
-- Tests in `docs/testing.md` cover the mapping category being changed.
+- Tests in `reference/testing-strategy.md` cover the mapping category being changed.

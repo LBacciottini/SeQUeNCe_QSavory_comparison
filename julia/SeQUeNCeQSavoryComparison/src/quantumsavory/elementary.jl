@@ -1,4 +1,43 @@
-"""Run independent elementary Barrett-Kok validation trials in QuantumSavory."""
+"""
+    run_qsavory_elementary_trials(config_path; seed, trials, timeout_s,
+                                  output_dir=nothing, raw_state_model="exact")
+
+Run independent elementary Barrett-Kok validation trials in QuantumSavory.
+
+Each trial creates a fresh two-node `RegisterNet` with one memory per node and
+one `EntanglerProt`.  The entangler uses the shared Barrett-Kok full-success
+probability and SeQUeNCe-equivalent effective attempt time, so the slow
+validation layer checks that QuantumSavory's elementary-link abstraction has
+the same asymptotic first-success rate and raw fidelity as the shared theory.
+
+# Arguments
+
+- `config_path`: Path to the shared TOML configuration.
+- `seed`: Base random seed.  Each trial receives a deterministic offset.
+- `trials`: Number of independent first-success experiments.
+- `timeout_s`: Maximum simulated time per trial, in seconds.
+- `output_dir`: Optional directory where `elementary_trials.csv` is written.
+- `raw_state_model`: `"exact"` for `BarrettKokBellPair` or `"werner"` for
+  `DepolarizedBellPair`.
+
+# Returns
+
+A vector of row dictionaries with observed success, completion time, fidelity,
+and theoretical rate/fidelity columns.
+
+# Examples
+
+```julia
+rows = run_qsavory_elementary_trials(
+    "configs/default.toml";
+    seed=1,
+    trials=10,
+    timeout_s=1.0,
+    raw_state_model="exact",
+)
+rows[1]["simulator"]
+```
+"""
 function run_qsavory_elementary_trials(config_path::AbstractString; seed::Integer, trials::Integer, timeout_s::Real, output_dir::Union{Nothing,AbstractString}=nothing, raw_state_model="exact")
     cfg = load_config(config_path)
     resolved = resolve_config(cfg)

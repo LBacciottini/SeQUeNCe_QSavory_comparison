@@ -25,6 +25,31 @@ def barrett_kok_fidelity_symmetric(eta: float, eta_d: float, visibility: float, 
     The formula matches the `BarrettKokBellPair` state used on the
     QuantumSavory side for parity bit `m=0`, and is used on the SeQUeNCe side
     as the raw memory fidelity configured for generated pairs.
+
+    Args:
+        eta: One-arm optical transmissivity from memory emission through fiber
+            to the BSM input.
+        eta_d: Detector efficiency.
+        visibility: Mode-matching visibility in the interference term.
+        dark_prob: Excess detector click probability per modeled detection
+            opportunity.
+
+    Returns:
+        Bell-state fidelity for the symmetric Barrett-Kok raw state. Returns
+        `nan` when the denominator is zero.
+
+    Raises:
+        ValueError: If any probability-like argument is outside `[0, 1]`.
+
+    Example:
+        ```python
+        fidelity = barrett_kok_fidelity_symmetric(
+            eta=0.6,
+            eta_d=0.9,
+            visibility=0.99,
+            dark_prob=1e-8,
+        )
+        ```
     """
 
     for name, value in (
@@ -54,6 +79,13 @@ def _schedule_sequence_transmit_ps(min_time_ps: int, frequency_hz: float) -> int
     quantum-channel clock bin, then converts the integer bin back to an integer
     picosecond timestamp. The elementary validation uses one photon on one
     channel per round, so the selected bin is never already occupied.
+
+    Args:
+        min_time_ps: Earliest allowed transmit time in picoseconds.
+        frequency_hz: Quantum-channel clock frequency.
+
+    Returns:
+        Scheduled transmit time in picoseconds.
     """
 
     time_bin = min_time_ps * frequency_hz / PS_PER_SECOND
@@ -82,6 +114,18 @@ def _sequence_barrett_kok_timing(
     The current adapter is symmetric: both endpoint-to-endpoint and
     endpoint-to-midpoint classical channels use `classical_delay_ps`, and both
     quantum arms use `quantum_delay_ps`.
+
+    Args:
+        quantum_delay_ps: One-way endpoint-to-midpoint photon delay.
+        classical_delay_ps: Classical control-message delay used by the
+            SeQUeNCe adapter.
+        quantum_channel_frequency_hz: Quantum-channel scheduling frequency.
+        memory_frequency_hz: Memory excitation frequency.
+        protocol_gap_ps: SeQUeNCe Barrett-Kok gap after BSM result return.
+
+    Returns:
+        Dictionary of picosecond timing milestones used to derive the
+        compressed QuantumSavory attempt duration.
     """
 
     primary_start_ps = classical_delay_ps
@@ -116,7 +160,28 @@ def _sequence_barrett_kok_timing(
 
 
 def derive_parameters(config: dict[str, Any]) -> dict[str, Any]:
-    """Compute simulator-agnostic derived parameters from a validated config."""
+    """Compute simulator-agnostic derived parameters from a validated config.
+
+    The returned dictionary is stored in manifests as `resolved_config.derived`
+    and is the shared source for simulator-specific adapters. It includes
+    optical transmissivities, detector click probabilities, Barrett-Kok success
+    probability, raw fidelity, SeQUeNCe-derived timing milestones, and the
+    purification target fidelity.
+
+    Args:
+        config: Validated shared configuration dictionary.
+
+    Returns:
+        Dictionary of derived scalar values. Seconds are used by default;
+        fields ending in `_ps` are picoseconds, and attenuation values state
+        their unit in the key.
+
+    Example:
+        ```python
+        resolved = resolve_config(load_config("shared/configs/default.toml"))
+        expected_rate = resolved["derived"]["barrett_kok_expected_rate_hz"]
+        ```
+    """
 
     topology = config["topology"]
     memories = config["memories"]
@@ -221,7 +286,14 @@ def derive_parameters(config: dict[str, Any]) -> dict[str, Any]:
 
 
 def require_finite_derived(derived: dict[str, Any]) -> None:
-    """Validate that derived floating point values are usable."""
+    """Validate that derived floating point values are usable.
+
+    Args:
+        derived: Dictionary returned by `derive_parameters`.
+
+    Raises:
+        ValueError: If any floating-point derived value is `nan` or infinite.
+    """
 
     for key, value in derived.items():
         if isinstance(value, float) and not isfinite(value):

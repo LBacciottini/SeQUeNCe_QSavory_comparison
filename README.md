@@ -28,7 +28,8 @@ at `r2`.
   adapter tests.
 - `julia/SeQUeNCeQSavoryComparison/test/` contains Julia package tests,
   following Julia's `Pkg.test()` convention.
-- `docs/` explains the config, simulator mapping, outputs, and test strategy.
+- `docs/` is organized as a Diátaxis documentation site: tutorials, how-to
+  guides, reference, and explanation.
 
 ## Quick Start
 
@@ -91,3 +92,18 @@ RUN_SLOW_SIM_TESTS=1 julia --project=julia/SeQUeNCeQSavoryComparison -e 'using P
 ```
 
 Generated outputs are ignored by git.
+
+## Documentation
+
+Install the docs dependencies and build the MkDocs site:
+
+```bash
+python3 -m pip install -r docs/requirements.txt
+python3 scripts/build_docs.py
+```
+
+Serve the site locally:
+
+```bash
+PYTHONPATH=python/src python3 -m mkdocs serve
+```

@@ -1,0 +1,60 @@
+site_name: SeQUeNCe / QuantumSavory Cross Validation
+site_description: Cross-validation experiments between SeQUeNCe and QuantumSavory.
+repo_name: SeQUeNCe_QSavory_comparison
+docs_dir: docs
+site_dir: site
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.indexes
+    - content.code.copy
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths:
+            - python/src
+          options:
+            docstring_style: google
+            show_source: true
+            separate_signature: true
+
+nav:
+  - Home: index.md
+  - Tutorials:
+      - Tutorials: tutorials/index.md
+      - First Comparison Run: tutorials/first-comparison.md
+  - How-to Guides:
+      - How-to Guides: how-to/index.md
+      - Run Simulators: how-to/run-simulators.md
+      - Run Batches and Sweeps: how-to/run-batches-and-sweeps.md
+      - Generate Plots: how-to/generate-plots.md
+      - Validate Agreement: how-to/validate-agreement.md
+      - Build Documentation: how-to/build-docs.md
+      - Running Overview: running.md
+  - Reference:
+      - Reference: reference/index.md
+      - Shared Configuration: reference/configuration.md
+      - Output Schema: reference/outputs.md
+      - Parameter Mapping: reference/parameter-mapping.md
+      - Testing Strategy: reference/testing-strategy.md
+      - Vendored Simulators: reference/vendored-simulators.md
+      - Generated Docs: generated/index.md
+      - Generated API: generated/api/index.md
+      - Python API: generated/api/python.md
+      - Julia API: generated/api/julia.md
+  - Explanation:
+      - Explanation: explanation/index.md
+      - Cross-Validation Model: explanation/cross-validation-model.md
+      - Simulator Semantics: explanation/simulator-semantics.md
+      - Exact and Werner Models: explanation/exact-and-werner-models.md
+
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+  - pymdownx.superfences

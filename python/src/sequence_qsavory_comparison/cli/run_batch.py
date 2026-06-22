@@ -1,4 +1,11 @@
-"""Run one or both simulators for a range of seeds."""
+"""Run one or both simulators for a range of seeds.
+
+The batch CLI creates one job per ``(simulator variant, seed)`` pair.  SeQUeNCe
+produces the ``sequence`` series, while QuantumSavory is run twice by default:
+once with the exact Barrett-Kok raw state and once with the Werner/depolarized
+raw-state abstraction.  Each job writes a canonical run directory containing
+``manifest.json``, ``pairs.csv``, and ``summary.csv``.
+"""
 
 from __future__ import annotations
 

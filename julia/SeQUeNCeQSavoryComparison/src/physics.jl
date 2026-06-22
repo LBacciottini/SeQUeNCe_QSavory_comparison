@@ -4,6 +4,30 @@ const PS_PER_SECOND = 1_000_000_000_000
     barrett_kok_fidelity_symmetric(eta, eta_d, visibility, dark_prob)
 
 Return the symmetric Barrett-Kok Bell-state fidelity for the shared model.
+
+The formula is the same simulator-agnostic expression used by the Python
+adapter.  It assumes symmetric optical arms and combines source/fiber loss
+(`eta`), detector efficiency (`eta_d`), mode-matching visibility, and per-round
+dark-count probability.
+
+# Arguments
+
+- `eta`: Total transmissivity from each memory to the midpoint beamsplitter.
+- `eta_d`: Detector efficiency.
+- `visibility`: Two-photon mode-matching visibility.
+- `dark_prob`: Dark-count probability per detector window.
+
+# Returns
+
+The conditional raw Bell-pair fidelity.  Returns `NaN` when the detection model
+has a zero denominator.
+
+# Examples
+
+```julia
+F = barrett_kok_fidelity_symmetric(0.9, 0.95, 0.99, 1e-8)
+0 <= F <= 1
+```
 """
 function barrett_kok_fidelity_symmetric(eta, eta_d, visibility, dark_prob)
     for (name, value) in (
@@ -70,7 +94,39 @@ function _sequence_barrett_kok_timing(;
     )
 end
 
-"""Compute simulator-agnostic derived parameters."""
+"""
+    derive_parameters(cfg) -> Dict{String,Any}
+
+Compute simulator-agnostic derived parameters.
+
+This function is the single source of truth for quantities shared by the
+SeQUeNCe and QuantumSavory implementations: half-link loss, arm
+transmissivity, Barrett-Kok success probability, SeQUeNCe-equivalent
+per-attempt timing, expected elementary-link generation rate, raw fidelity, and
+the purification target threshold.
+
+The Barrett-Kok timing mirrors the SeQUeNCe source-level protocol sequence.  A
+logical attempt can terminate after round 1 unless the round-1 herald permits
+round 2, so the effective attempt time is
+`round1_time_s + round2_entry_probability * round2_time_s`.
+
+# Arguments
+
+- `cfg`: Shared configuration dictionary that has passed [`validate_config`](@ref).
+
+# Returns
+
+A dictionary containing derived physical quantities in seconds/meters and
+SeQUeNCe timeline quantities in picoseconds.
+
+# Examples
+
+```julia
+cfg = load_config("configs/default.toml")
+derived = derive_parameters(cfg)
+derived["barrett_kok_effective_attempt_time_s"]
+```
+"""
 function derive_parameters(cfg)
     link_length_km = Float64(cfg["topology"]["link_length_km"])
     speed_km_per_s = Float64(cfg["topology"]["signal_speed_km_per_s"])
@@ -151,7 +207,32 @@ function derive_parameters(cfg)
     )
 end
 
-"""Return asymptotic Barrett-Kok elementary-link generation-rate expectations."""
+"""
+    elementary_rate_theory(cfg) -> Dict{String,Any}
+
+Return asymptotic Barrett-Kok elementary-link generation-rate expectations.
+
+The optional slow validation tests compare many first-success elementary-link
+trials against these expectations.  The rate is computed from the shared
+effective attempt time and full two-round success probability, not from a fixed
+two-round duration.
+
+# Arguments
+
+- `cfg`: Shared configuration dictionary.
+
+# Returns
+
+A dictionary with success probability, effective attempt time, expected rate,
+expected mean first-success time, and expected raw fidelity.
+
+# Examples
+
+```julia
+theory = elementary_rate_theory(load_config("configs/default.toml"))
+theory["expected_mean_completion_time_s"] == 1 / theory["expected_rate_hz"]
+```
+"""
 function elementary_rate_theory(cfg)
     resolved = resolve_config(cfg)
     derived = resolved["derived"]

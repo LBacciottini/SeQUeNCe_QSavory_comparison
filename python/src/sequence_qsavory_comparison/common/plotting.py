@@ -1,4 +1,9 @@
-"""Batch summary aggregation and plotting helpers."""
+"""Batch summary aggregation and plotting helpers.
+
+The plotting API consumes the canonical `summary.csv` files written by both
+simulators. It has two modes: seeded batch plots with seed on the x-axis and
+link-length sweep plots with elementary link length on the x-axis.
+"""
 
 from __future__ import annotations
 
@@ -15,7 +20,16 @@ DEFAULT_SIMULATOR_ORDER = ("sequence", "qsavory_werner", "qsavory_exact")
 
 
 def read_summary_rows(root: str | pathlib.Path) -> list[dict[str, str]]:
-    """Read all simulator summary rows under a batch output directory."""
+    """Read all simulator summary rows under a batch output directory.
+
+    Args:
+        root: Batch root containing `<simulator>/seed_<n>/summary.csv`
+            directories.
+
+    Returns:
+        Raw CSV rows as dictionaries. Values are strings because they come
+        directly from `csv.DictReader`.
+    """
 
     rows: list[dict[str, str]] = []
     for path in pathlib.Path(root).glob(SUMMARY_GLOB):
@@ -25,7 +39,15 @@ def read_summary_rows(root: str | pathlib.Path) -> list[dict[str, str]]:
 
 
 def read_sweep_summary_rows(root: str | pathlib.Path) -> list[dict[str, str]]:
-    """Read sweep summaries and attach link length from each run manifest."""
+    """Read sweep summaries and attach link length from each run manifest.
+
+    Args:
+        root: Sweep root containing `link_XXXkm/<simulator>/seed_<n>/`
+            directories.
+
+    Returns:
+        Summary rows with an added `link_length_km` string field.
+    """
 
     rows: list[dict[str, str]] = []
     for path in pathlib.Path(root).glob(SWEEP_SUMMARY_GLOB):
@@ -44,7 +66,16 @@ def read_sweep_summary_rows(root: str | pathlib.Path) -> list[dict[str, str]]:
 
 
 def series_by_simulator(rows: Iterable[dict[str, str]], field: str) -> dict[str, list[tuple[int, float]]]:
-    """Return sorted `(seed, value)` series for a numeric summary field."""
+    """Return sorted `(seed, value)` series for a numeric summary field.
+
+    Args:
+        rows: Summary rows from `read_summary_rows`.
+        field: Numeric CSV column to plot or aggregate.
+
+    Returns:
+        Mapping from simulator label to seed-sorted numeric values. Rows with
+        empty values for `field` are skipped.
+    """
 
     grouped: dict[str, list[tuple[int, float]]] = {}
     for row in rows:
@@ -56,7 +87,18 @@ def series_by_simulator(rows: Iterable[dict[str, str]], field: str) -> dict[str,
 
 
 def write_comparison_csv(rows: Iterable[dict[str, str]], path: str | pathlib.Path) -> None:
-    """Write aggregate completion-time statistics by simulator."""
+    """Write aggregate completion-time statistics by simulator.
+
+    Args:
+        rows: Batch summary rows.
+        path: Destination aggregate CSV path.
+
+    Example:
+        ```python
+        rows = read_summary_rows("outputs/batch")
+        write_comparison_csv(rows, "outputs/batch/comparison.csv")
+        ```
+    """
 
     rows = list(rows)
     by_simulator = {
@@ -97,7 +139,14 @@ def write_sweep_comparison_csv(
     *,
     fidelity_field: str = "flow2_mean_fidelity",
 ) -> None:
-    """Write aggregate sweep statistics by link length and simulator."""
+    """Write aggregate sweep statistics by link length and simulator.
+
+    Args:
+        rows: Sweep summary rows with `link_length_km` populated.
+        path: Destination aggregate CSV path.
+        fidelity_field: Summary fidelity column to aggregate. Defaults to the
+            end-to-end flow2 fidelity.
+    """
 
     rows = list(rows)
     grouped: dict[tuple[float, str], list[dict[str, str]]] = {}
@@ -150,7 +199,19 @@ def plot_batch_curves(
     *,
     fidelity_field: str = "flow2_mean_fidelity",
 ) -> dict[str, pathlib.Path]:
-    """Create completion-time and average-fidelity curves from batch summaries."""
+    """Create completion-time and average-fidelity curves from batch summaries.
+
+    Args:
+        root: Batch root to scan for `summary.csv` files.
+        output_dir: Directory where PNG files should be written.
+        fidelity_field: Summary column used for the fidelity plot.
+
+    Returns:
+        Paths keyed by `"completion_time"` and `"average_fidelity"`.
+
+    Raises:
+        RuntimeError: If `matplotlib` is not installed.
+    """
 
     rows = read_summary_rows(root)
     out = pathlib.Path(output_dir)
@@ -178,7 +239,19 @@ def plot_sweep_curves(
     *,
     fidelity_field: str = "flow2_mean_fidelity",
 ) -> dict[str, pathlib.Path]:
-    """Create completion-time and average-fidelity curves by link length."""
+    """Create completion-time and average-fidelity curves by link length.
+
+    Args:
+        root: Sweep root to scan for nested summaries and manifests.
+        output_dir: Directory where PNG files should be written.
+        fidelity_field: Summary column used for the fidelity plot.
+
+    Returns:
+        Paths keyed by `"completion_time"` and `"average_fidelity"`.
+
+    Raises:
+        RuntimeError: If `matplotlib` is not installed.
+    """
 
     rows = read_sweep_summary_rows(root)
     out = pathlib.Path(output_dir)
@@ -201,7 +274,16 @@ def plot_sweep_curves(
 
 
 def sweep_series_by_simulator(rows: Iterable[dict[str, str]], field: str) -> dict[str, list[tuple[float, float, float]]]:
-    """Return sorted `(link_length_km, mean, ci95)` series for a numeric field."""
+    """Return sorted `(link_length_km, mean, ci95)` series for a numeric field.
+
+    Args:
+        rows: Sweep summary rows.
+        field: Numeric field to aggregate by link length and simulator.
+
+    Returns:
+        Mapping from simulator label to tuples of link length, sample mean, and
+        95% confidence interval half-width.
+    """
 
     grouped: dict[tuple[str, float], list[float]] = {}
     for row in rows:

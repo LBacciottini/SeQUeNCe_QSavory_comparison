@@ -1,4 +1,11 @@
-"""Create comparison CSV and plot artifacts from simulator summaries."""
+"""Create comparison CSV and plot artifacts from simulator summaries.
+
+The plotting CLI is intentionally schema-driven: it reads canonical
+``summary.csv`` files produced by either simulator, aggregates the configured
+fidelity field and completion time, and writes both machine-readable comparison
+CSV files and PNG plots.  It supports ordinary seeded batches and link-length
+sweeps.
+"""
 
 from __future__ import annotations
 

@@ -1,4 +1,10 @@
-"""Lazy imports for SeQUeNCe symbols used by the adapter."""
+"""Lazy imports for SeQUeNCe symbols used by the adapter.
+
+The Python package can be imported in environments where SeQUeNCe itself is not
+installed, for example when only the plotting or shared-configuration helpers
+are needed.  This module keeps SeQUeNCe imports behind an explicit function so
+callers fail only when they request the Python simulator adapter.
+"""
 
 from __future__ import annotations
 
@@ -10,7 +16,23 @@ from typing import Any
 
 @dataclass(frozen=True)
 class SequenceImports:
-    """Container for SeQUeNCe symbols used by this adapter."""
+    """Container for the SeQUeNCe classes used by this adapter.
+
+    Attributes:
+        Timeline: SeQUeNCe discrete-event timeline class.
+        QuantumRouter: Router node class that owns memory arrays and protocol
+            stacks.
+        BSMNode: Midpoint Bell-state-measurement node class.
+        ClassicalChannel: Classical channel class used for protocol messages.
+        QuantumChannel: Quantum channel class used for photons.
+        Rule: Resource-manager rule class.
+        ResourceManager: Resource manager installed on comparison router nodes.
+        MemoryInfo: Metadata record for one physical memory.
+        EntanglementGenerationA: Barrett-Kok endpoint protocol.
+        BBPSSWProtocol: SeQUeNCe BBPSSW purification protocol.
+        EntanglementSwappingA: Swapping protocol run at the middle router.
+        EntanglementSwappingB: Swapping protocol run at endpoint routers.
+    """
 
     Timeline: Any
     QuantumRouter: Any
@@ -27,7 +49,27 @@ class SequenceImports:
 
 
 def import_sequence(sequence_path: str | None = None) -> SequenceImports:
-    """Import SeQUeNCe from an optional local checkout path."""
+    """Import SeQUeNCe symbols from an installed package or local checkout.
+
+    Args:
+        sequence_path: Optional path to a SeQUeNCe source checkout.  When
+            provided, the resolved path is prepended to ``sys.path`` before
+            importing.  This lets the adapter use the vendored release copy
+            without requiring a package installation step.
+
+    Returns:
+        A :class:`SequenceImports` bundle containing the SeQUeNCe classes used
+        by the comparison implementation.
+
+    Raises:
+        ImportError: If SeQUeNCe is not importable from either ``sequence_path``
+            or the active Python environment.
+
+    Example:
+        >>> imports = import_sequence("../dev/SeQUeNCe")
+        >>> imports.Timeline is not None
+        True
+    """
 
     if sequence_path:
         path = str(pathlib.Path(sequence_path).resolve())

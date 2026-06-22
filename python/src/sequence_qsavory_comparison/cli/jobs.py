@@ -1,4 +1,10 @@
-"""Process-based job scheduling for simulator batch runners."""
+"""Process-based job scheduling for simulator batch and sweep runners.
+
+The runner treats each simulator invocation as an independent subprocess. This
+keeps SeQUeNCe and Julia process state isolated, allows embarrassingly-parallel
+seed/variant sweeps, and records a manifest-like `jobs.csv` audit table for the
+batch root.
+"""
 
 from __future__ import annotations
 
@@ -32,6 +38,20 @@ JOB_FIELDS = (
 
 @dataclass(frozen=True)
 class Job:
+    """A single subprocess invocation in a batch or sweep.
+
+    Attributes:
+        job_id: Stable identifier written to `jobs.csv`.
+        kind: Job category, for example `simulation` or `julia_prewarm`.
+        simulator: Simulator label such as `sequence`, `qsavory_exact`, or
+            `qsavory_werner`.
+        command: Argument vector passed directly to `subprocess.Popen`.
+        config: Config path used by the job, if applicable.
+        output: Output directory used by the job, if applicable.
+        seed: Seed assigned to a simulator job.
+        link_length_km: Sweep value assigned to a simulator job.
+    """
+
     job_id: str
     kind: str
     simulator: str
@@ -44,6 +64,13 @@ class Job:
 
 @dataclass
 class JobRecord:
+    """Runtime status for a launched or pending `Job`.
+
+    `JobRecord` is the in-memory representation of one row in `jobs.csv`.
+    Running records also hold the live `Popen` object and monotonic start time;
+    those fields are deliberately excluded from `repr`.
+    """
+
     job: Job
     status: str
     returncode: int | None = None
@@ -55,11 +82,33 @@ class JobRecord:
 
 
 class JobFailure(RuntimeError):
-    """Raised when one or more simulator jobs fail."""
+    """Raised when one or more simulator jobs fail.
+
+    The scheduler is fail-fast: after the first nonzero return code it
+    terminates running jobs, marks pending jobs as cancelled, writes the final
+    `jobs.csv`, and raises this exception.
+    """
 
 
 def parse_worker_count(value: str | int | None, *, parallel: bool, job_count: int) -> int:
-    """Return the effective worker count for a job batch."""
+    """Return the effective worker count for a job batch.
+
+    Args:
+        value: Explicit worker count, `"auto"`, or `None`.
+        parallel: Whether the caller requested automatic parallel execution.
+        job_count: Number of simulator jobs to run.
+
+    Returns:
+        Worker count clamped to `[1, job_count]`, or `1` for an empty batch.
+
+    Raises:
+        ValueError: If the requested count is zero or negative.
+
+    Example:
+        ```python
+        workers = parse_worker_count("auto", parallel=True, job_count=12)
+        ```
+    """
 
     if value is None:
         value = "auto" if parallel else "1"
@@ -81,7 +130,31 @@ def run_jobs(
     workers: int,
     prewarm_job: Job | None = None,
 ) -> list[JobRecord]:
-    """Run jobs with bounded process parallelism and fail-fast semantics."""
+    """Run jobs with bounded process parallelism and fail-fast semantics.
+
+    Args:
+        jobs: Simulator jobs to execute.
+        jobs_csv: Path where job records should be written.
+        workers: Maximum number of simulator subprocesses to run at once.
+        prewarm_job: Optional blocking job to run before the worker pool. The
+            batch runners use this for Julia package instantiation and
+            precompilation.
+
+    Returns:
+        Final `JobRecord` objects for prewarm, completed, terminated, and
+        cancelled jobs.
+
+    Raises:
+        JobFailure: If the prewarm job or any simulator job returns nonzero.
+        KeyboardInterrupt: Re-raised after running jobs are terminated and the
+            CSV status file is written.
+
+    Example:
+        ```python
+        records = run_jobs(jobs, jobs_csv="outputs/batch/jobs.csv", workers=4)
+        assert all(record.status == "succeeded" for record in records)
+        ```
+    """
 
     records: list[JobRecord] = []
     jobs_csv = pathlib.Path(jobs_csv)

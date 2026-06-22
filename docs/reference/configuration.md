@@ -160,5 +160,5 @@ and stored in manifests for audit. The most important derived groups are:
 - state-quality model: `barrett_kok_raw_fidelity` and
   `target_purification_fidelity`.
 
-See `docs/simulator_mapping.md` for the formal equations and simulator-specific
+See `parameter-mapping.md` for the formal equations and simulator-specific
 parameter mapping.

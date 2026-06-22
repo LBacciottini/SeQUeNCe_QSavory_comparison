@@ -1,4 +1,9 @@
-"""Top-level SeQUeNCe simulation runner."""
+"""Top-level SeQUeNCe simulation runner.
+
+This module assembles the full chapter-4 comparison scenario: two elementary
+links, a short-range flow on ``r1-r2``, a long-range flow on ``r1-r3`` through
+swapping at ``r2``, and BBPSSW purification only on end-to-end ``r1-r3`` pairs.
+"""
 
 from __future__ import annotations
 
@@ -18,7 +23,30 @@ from .swapping import es_action_a, es_action_b, es_condition_a, es_condition_b
 
 
 def run_sequence(config: dict[str, Any], seed: int, output_dir: str | pathlib.Path) -> dict[str, Any]:
-    """Run SeQUeNCe from the shared config and write canonical outputs."""
+    """Run SeQUeNCe from the shared config and write canonical outputs.
+
+    The function is the Python-side production entry point used by CLI batch
+    and sweep runners.  It resolves the shared config, builds SeQUeNCe nodes
+    and channels, installs resource-manager rules for generation, swapping, and
+    end-to-end purification, runs the timeline, and writes ``pairs.csv``,
+    ``summary.csv``, and ``manifest.json`` into ``output_dir``.
+
+    Args:
+        config: Shared simulator-agnostic configuration dictionary.
+        seed: Deterministic seed for the SeQUeNCe timeline and node random
+            streams.
+        output_dir: Directory for canonical run artifacts.
+
+    Returns:
+        A dictionary with ``manifest``, ``pairs``, and ``summary`` entries.  The
+        same information is also written to disk using filenames from the
+        resolved config.
+
+    Example:
+        >>> result = run_sequence(cfg, seed=7, output_dir="results/sequence/seed_7")  # doctest: +SKIP
+        >>> result.get("summary", {}).get("simulator")  # doctest: +SKIP
+        'sequence'
+    """
 
     resolved = resolve_config(config)
     imports = import_sequence(resolved["paths"].get("sequence_path"))

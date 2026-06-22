@@ -1,4 +1,10 @@
-"""Run the SeQUeNCe adapter from a shared TOML config."""
+"""Run the SeQUeNCe adapter from a shared TOML config.
+
+This module is the small command-line wrapper around
+``sequence_qsavory_comparison.sequence.run_sequence``.  It is used directly by
+the batch and sweep job scheduler so each SeQUeNCe seed runs in its own Python
+process and writes a self-contained canonical output directory.
+"""
 
 from __future__ import annotations
 

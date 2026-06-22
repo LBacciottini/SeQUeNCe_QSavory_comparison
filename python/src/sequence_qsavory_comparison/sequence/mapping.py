@@ -8,7 +8,30 @@ from sequence_qsavory_comparison.common.config import resolve_config
 
 
 def inspect_sequence_configuration(config: dict[str, Any]) -> dict[str, Any]:
-    """Return the exact SeQUeNCe settings implied by the shared config."""
+    """Return the exact SeQUeNCe settings implied by the shared config.
+
+    The returned dictionary is written into each SeQUeNCe run manifest under
+    ``applied_config``.  It translates shared, simulator-agnostic fields into
+    the names and units used by the SeQUeNCe adapter, including memory-array
+    settings, detector parameters, channel delays, Barrett-Kok timing, and
+    resource-manager rule scopes.
+
+    Args:
+        config: Shared configuration dictionary, usually loaded from TOML with
+            :func:`sequence_qsavory_comparison.common.config.load_config`.
+
+    Returns:
+        A manifest-safe dictionary containing only JSON-serializable values.
+        Times in the ``barrett_kok_timing`` block include both seconds and the
+        picosecond values used by SeQUeNCe's timeline.
+
+    Example:
+        >>> from sequence_qsavory_comparison.common.config import load_config
+        >>> cfg = load_config("../../configs/default.toml")  # doctest: +SKIP
+        >>> applied = inspect_sequence_configuration(cfg)  # doctest: +SKIP
+        >>> applied.get("rules", {}).get("purification_scope")  # doctest: +SKIP
+        'end_to_end_only'
+    """
 
     resolved = resolve_config(config)
     derived = resolved["derived"]

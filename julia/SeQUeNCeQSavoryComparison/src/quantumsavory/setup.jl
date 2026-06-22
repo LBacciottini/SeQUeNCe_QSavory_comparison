@@ -23,7 +23,49 @@ function _install_lane_entanglers!(sim, net, nodeA, nodeB, rangeA, rangeB, succe
     return nothing
 end
 
-"""Run the QuantumSavory analytical-BK implementation and write outputs."""
+"""
+    run_qsavory(config_path, seed, output_dir; raw_state_model="exact") -> Dict
+
+Run the QuantumSavory analytical-Barrett-Kok implementation and write outputs.
+
+The runner builds a three-register `RegisterNet`, starts one `EntanglerProt`
+per reserved memory lane, runs `SwapperProt` at the middle node, and runs
+`BBPSSWProt` only between the end nodes `r1` and `r3`.  The elementary
+entanglers use the shared effective Barrett-Kok attempt time and full-success
+probability derived from the same configuration used by the SeQUeNCe adapter.
+
+Two raw-state models are supported:
+
+- `"exact"` uses `BarrettKokBellPair` with the derived optical parameters.
+- `"werner"` uses `DepolarizedBellPair` with the same raw fidelity, giving a
+  Werner-state abstraction that can be compared directly to SeQUeNCe's BDS
+  representation.
+
+# Arguments
+
+- `config_path`: Path to the shared TOML configuration.
+- `seed`: Random seed for QuantumSavory and Julia's global RNG.
+- `output_dir`: Directory where `pairs.csv`, `summary.csv`, and
+  `manifest.json` are written.
+- `raw_state_model`: `"exact"` or `"werner"`.
+
+# Returns
+
+A dictionary containing the in-memory `manifest`, `pairs`, and `summary`
+objects that were also written to disk.
+
+# Examples
+
+```julia
+result = run_qsavory(
+    "configs/default.toml",
+    7,
+    "results/qsavory_exact/seed_7";
+    raw_state_model="exact",
+)
+result["summary"]["simulator"] == "qsavory_exact"
+```
+"""
 function run_qsavory(config_path::AbstractString, seed::Integer, output_dir::AbstractString; raw_state_model="exact")
     cfg = load_config(config_path)
     resolved = resolve_config(cfg)

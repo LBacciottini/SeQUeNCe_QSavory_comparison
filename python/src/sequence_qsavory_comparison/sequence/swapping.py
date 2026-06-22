@@ -1,4 +1,10 @@
-"""SeQUeNCe entanglement-swapping rules."""
+"""SeQUeNCe entanglement-swapping rules.
+
+The comparison uses ideal Bell-state swaps.  SeQUeNCe's stock swapping
+protocol may expose a degradation factor, and the request-side action overrides
+that factor to ``1.0`` so the Python and Julia implementations use the same
+state-transform semantics.
+"""
 
 from __future__ import annotations
 
@@ -8,6 +14,20 @@ from .imports import import_sequence
 
 
 def es_condition_a(memory_info: Any, manager: Any, args: dict[str, Any]) -> list[Any]:
+    """Select two middle-node memories for an ``r1-r3`` swap.
+
+    Args:
+        memory_info: Candidate memory at the middle router.
+        manager: Middle-router memory manager used to find the opposite-link
+            pair.
+        args: Rule arguments containing inclusive slot bounds,
+            ``target_fidelity``, and endpoint names ``left`` and ``right``.
+
+    Returns:
+        Two compatible ``MemoryInfo`` records, one connected to each endpoint,
+        or an empty list.
+    """
+
     allowed_states = {"ENTANGLED", "PURIFIED"}
     if not (int(args["index_lower"]) <= memory_info.index <= int(args["index_upper"])):
         return []
@@ -25,6 +45,20 @@ def es_condition_a(memory_info: Any, manager: Any, args: dict[str, Any]) -> list
 
 
 def es_condition_b(memory_info: Any, manager: Any, args: dict[str, Any]) -> list[Any]:
+    """Select one endpoint memory waiting for a swap notification.
+
+    Args:
+        memory_info: Candidate endpoint memory.
+        manager: Endpoint memory manager, unused here but present in the
+            SeQUeNCe callback signature.
+        args: Rule arguments containing local slot bounds, ``target_node``,
+            and ``target_fidelity``.
+
+    Returns:
+        ``[memory_info]`` when the endpoint memory can participate in a swap,
+        otherwise an empty list.
+    """
+
     allowed_states = {"ENTANGLED", "PURIFIED"}
     if memory_info.state in allowed_states and int(args["index_lower"]) <= memory_info.index <= int(args["index_upper"]):
         if memory_info.remote_node != args["target_node"] and memory_info.fidelity >= float(args["target_fidelity"]):
@@ -33,6 +67,17 @@ def es_condition_b(memory_info: Any, manager: Any, args: dict[str, Any]) -> list
 
 
 def es_match_func(protocols: list[Any], args: dict[str, Any]) -> Any:
+    """Find the endpoint ``EntanglementSwappingB`` protocol by memory name.
+
+    Args:
+        protocols: Candidate endpoint protocols offered by the remote rule
+            manager.
+        args: Dictionary with ``target_memo``, the endpoint memory name.
+
+    Returns:
+        A matching endpoint protocol, or ``None`` if it is not ready.
+    """
+
     imports = import_sequence(None)
     for protocol in protocols:
         if isinstance(protocol, imports.EntanglementSwappingB) and protocol.memory.name == args["target_memo"]:
@@ -41,6 +86,18 @@ def es_match_func(protocols: list[Any], args: dict[str, Any]) -> Any:
 
 
 def es_action_a(memories_info: list[Any], args: dict[str, Any]) -> list[Any]:
+    """Create the middle-node swap protocol and remote match requests.
+
+    Args:
+        memories_info: Two middle-node memory records selected by
+            :func:`es_condition_a`.
+        args: Action arguments containing ``succ_prob``.
+
+    Returns:
+        The SeQUeNCe action payload that creates ``EntanglementSwappingA`` at
+        the middle node and asks both endpoints to match by remote memory name.
+    """
+
     imports = import_sequence(None)
     memories = [info.memory for info in memories_info]
     protocol = imports.EntanglementSwappingA.create(
@@ -61,6 +118,16 @@ def es_action_a(memories_info: list[Any], args: dict[str, Any]) -> list[Any]:
 
 
 def es_action_b(memories_info: list[Any], args: dict[str, Any]) -> list[Any]:
+    """Create an endpoint swap protocol for one memory.
+
+    Args:
+        memories_info: One endpoint memory record.
+        args: Unused action dictionary required by SeQUeNCe's callback shape.
+
+    Returns:
+        A SeQUeNCe action payload with no outbound protocol request.
+    """
+
     imports = import_sequence(None)
     memory = memories_info[0].memory
     protocol = imports.EntanglementSwappingB.create(None, "ESB." + memory.name, memory)
