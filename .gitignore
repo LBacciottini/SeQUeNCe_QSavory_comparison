@@ -10,3 +10,4 @@ test/Manifest.toml
 outputs/
 results/
 data/generated/
+output/

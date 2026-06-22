@@ -38,6 +38,49 @@ def load_config(path: str | pathlib.Path) -> dict[str, Any]:
     return _parse_minimal_toml(config_path.read_text(encoding="utf-8"))
 
 
+def write_config(path: str | pathlib.Path, config: dict[str, Any]) -> None:
+    """Write a shared config TOML file using the supported scalar subset."""
+
+    out = pathlib.Path(path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with out.open("w", encoding="utf-8") as handle:
+        for section, values in config.items():
+            if not isinstance(values, dict):
+                continue
+            _write_toml_section(handle, section, values)
+
+
+def _write_toml_section(handle, prefix: str, values: dict[str, Any]) -> None:
+    scalar_items: list[tuple[str, Any]] = []
+    nested_items: list[tuple[str, dict[str, Any]]] = []
+    for key, value in values.items():
+        if isinstance(value, dict):
+            nested_items.append((key, value))
+        else:
+            scalar_items.append((key, value))
+    if scalar_items:
+        handle.write(f"[{prefix}]\n")
+        for key, value in scalar_items:
+            handle.write(f"{key} = {_toml_value(value)}\n")
+        handle.write("\n")
+    for key, value in nested_items:
+        _write_toml_section(handle, f"{prefix}.{key}", value)
+
+
+def _toml_value(value: Any) -> str:
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    if isinstance(value, str):
+        return '"' + value.replace("\\", "\\\\").replace('"', '\\"') + '"'
+    if isinstance(value, list):
+        return "[" + ", ".join(_toml_value(item) for item in value) + "]"
+    if isinstance(value, int):
+        return str(value)
+    if isinstance(value, float):
+        return repr(value)
+    raise TypeError(f"unsupported TOML value type: {type(value).__name__}")
+
+
 def _resolve_input_path(path: str | pathlib.Path) -> pathlib.Path:
     config_path = pathlib.Path(path)
     if config_path.exists() or config_path.is_absolute():

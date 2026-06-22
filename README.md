@@ -68,6 +68,21 @@ Run SeQUeNCe and both QuantumSavory variants across a seed range:
 python3 scripts/run_batch.py --config shared/configs/default.toml --seeds 1:10 --output outputs/batch
 ```
 
+Add `--parallel` or `--workers N` to run independent simulator jobs in
+parallel. One job is one seed in one simulator variant.
+
+```bash
+conda run -n sequenceEnv python scripts/run_batch.py --config shared/configs/default.toml --seeds 1:10 --output outputs/batch --workers 4
+```
+
+Run a link-length sweep with seeded repetitions. This creates one batch
+subdirectory per elementary-link length:
+
+```bash
+conda run -n sequenceEnv python scripts/run_sweep.py --config shared/configs/default.toml --link-lengths 5,10,20,30,40 --seeds 1:30 --output outputs/link_length_sweep --workers 4
+python3 scripts/plot_compare.py --mode sweep --input outputs/link_length_sweep --output outputs/link_length_sweep/sweep_comparison.csv
+```
+
 Run optional elementary-link statistical validation tests:
 
 ```bash
