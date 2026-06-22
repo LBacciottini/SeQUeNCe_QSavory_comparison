@@ -11,8 +11,8 @@ conda run -n sequenceEnv python scripts/plot_compare.py \
 This writes:
 
 - `comparison.csv`
-- `completion_time_by_seed.png`
-- `average_fidelity_by_seed.png`
+- `completion_time_by_seed.pdf`
+- `average_fidelity_by_seed.pdf`
 
 The fidelity plot uses `flow2_mean_fidelity` by default. To plot elementary
 flow fidelity instead:
@@ -36,5 +36,5 @@ conda run -n sequenceEnv python scripts/plot_compare.py \
 This writes:
 
 - `sweep_comparison.csv`
-- `completion_time_by_link_length.png`
-- `average_fidelity_by_link_length.png`
+- `completion_time_by_link_length.pdf`
+- `average_fidelity_by_link_length.pdf`

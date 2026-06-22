@@ -2,6 +2,7 @@ import csv
 import json
 import tempfile
 import unittest
+import unittest.mock
 from pathlib import Path
 
 from sequence_qsavory_comparison.common.plotting import (
@@ -147,8 +148,8 @@ class PlottingApiTests(unittest.TestCase):
                 paths = plot_sweep_curves(root, root / "plots")
 
             self.assertEqual(plot.call_count, 2)
-            self.assertEqual(paths["completion_time"], root / "plots" / "completion_time_by_link_length.png")
-            self.assertEqual(paths["average_fidelity"], root / "plots" / "average_fidelity_by_link_length.png")
+            self.assertEqual(paths["completion_time"], root / "plots" / "completion_time_by_link_length.pdf")
+            self.assertEqual(paths["average_fidelity"], root / "plots" / "average_fidelity_by_link_length.pdf")
 
 
 if __name__ == "__main__":

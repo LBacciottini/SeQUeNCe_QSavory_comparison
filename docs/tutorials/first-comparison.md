@@ -55,8 +55,8 @@ conda run -n sequenceEnv python scripts/plot_compare.py \
 The batch directory now contains:
 
 - `comparison.csv`
-- `completion_time_by_seed.png`
-- `average_fidelity_by_seed.png`
+- `completion_time_by_seed.pdf`
+- `average_fidelity_by_seed.pdf`
 
 ## 6. Inspect one summary
 

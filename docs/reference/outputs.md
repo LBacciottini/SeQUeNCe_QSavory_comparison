@@ -95,8 +95,8 @@ directory. In the default `--mode batch`, it writes:
 - `comparison.csv`: aggregate completion-time statistics by simulator, with
   separate counts for runs that have a timing value and runs that reached the
   configured target pair count;
-- `completion_time_by_seed.png`: completion time versus seed;
-- `average_fidelity_by_seed.png`: average fidelity versus seed.
+- `completion_time_by_seed.pdf`: completion time versus seed;
+- `average_fidelity_by_seed.pdf`: average fidelity versus seed.
 
 The average-fidelity plot uses `flow2_mean_fidelity` by default, because flow2
 is the end-to-end repeater-chain output. Pass `--fidelity-field
@@ -133,7 +133,7 @@ This writes:
 
 - `sweep_comparison.csv`: aggregate statistics by link length and simulator,
   including means, standard deviations, and 95% confidence intervals;
-- `completion_time_by_link_length.png`: mean completion time versus elementary
+- `completion_time_by_link_length.pdf`: mean completion time versus elementary
   link length with 95% confidence intervals;
-- `average_fidelity_by_link_length.png`: mean flow2 fidelity versus elementary
+- `average_fidelity_by_link_length.pdf`: mean flow2 fidelity versus elementary
   link length with 95% confidence intervals.

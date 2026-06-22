@@ -203,7 +203,7 @@ def plot_batch_curves(
 
     Args:
         root: Batch root to scan for `summary.csv` files.
-        output_dir: Directory where PNG files should be written.
+        output_dir: Directory where PDF files should be written.
         fidelity_field: Summary column used for the fidelity plot.
 
     Returns:
@@ -216,8 +216,8 @@ def plot_batch_curves(
     rows = read_summary_rows(root)
     out = pathlib.Path(output_dir)
     out.mkdir(parents=True, exist_ok=True)
-    completion_path = out / "completion_time_by_seed.png"
-    fidelity_path = out / "average_fidelity_by_seed.png"
+    completion_path = out / "completion_time_by_seed.pdf"
+    fidelity_path = out / "average_fidelity_by_seed.pdf"
     _plot_series(
         series_by_simulator(rows, "completion_time_s"),
         completion_path,
@@ -243,7 +243,7 @@ def plot_sweep_curves(
 
     Args:
         root: Sweep root to scan for nested summaries and manifests.
-        output_dir: Directory where PNG files should be written.
+        output_dir: Directory where PDF files should be written.
         fidelity_field: Summary column used for the fidelity plot.
 
     Returns:
@@ -256,8 +256,8 @@ def plot_sweep_curves(
     rows = read_sweep_summary_rows(root)
     out = pathlib.Path(output_dir)
     out.mkdir(parents=True, exist_ok=True)
-    completion_path = out / "completion_time_by_link_length.png"
-    fidelity_path = out / "average_fidelity_by_link_length.png"
+    completion_path = out / "completion_time_by_link_length.pdf"
+    fidelity_path = out / "average_fidelity_by_link_length.pdf"
     _plot_errorbar_series(
         sweep_series_by_simulator(rows, "completion_time_s"),
         completion_path,

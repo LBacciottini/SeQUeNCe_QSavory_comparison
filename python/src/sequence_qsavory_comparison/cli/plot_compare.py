@@ -3,7 +3,7 @@
 The plotting CLI is intentionally schema-driven: it reads canonical
 ``summary.csv`` files produced by either simulator, aggregates the configured
 fidelity field and completion time, and writes both machine-readable comparison
-CSV files and PNG plots.  It supports ordinary seeded batches and link-length
+CSV files and PDF plots.  It supports ordinary seeded batches and link-length
 sweeps.
 """
 
@@ -26,7 +26,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", required=True)
     parser.add_argument("--output", required=True, help="Aggregate completion-time CSV path")
-    parser.add_argument("--plot-dir", default=None, help="Directory for PNG plots; defaults to the CSV parent")
+    parser.add_argument("--plot-dir", default=None, help="Directory for PDF plots; defaults to the CSV parent")
     parser.add_argument("--fidelity-field", default="flow2_mean_fidelity")
     parser.add_argument("--mode", choices=("batch", "sweep"), default="batch")
     args = parser.parse_args()
