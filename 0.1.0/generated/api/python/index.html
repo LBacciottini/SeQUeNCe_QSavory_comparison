@@ -4563,7 +4563,7 @@ link-length sweep plots with elementary link length on the x-axis.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Directory where PNG files should be written.</p>
+                <p>Directory where PDF files should be written.</p>
               </div>
             </td>
             <td>
@@ -4685,7 +4685,7 @@ link-length sweep plots with elementary link length on the x-axis.</p>
 
 <span class="sd">    Args:</span>
 <span class="sd">        root: Batch root to scan for `summary.csv` files.</span>
-<span class="sd">        output_dir: Directory where PNG files should be written.</span>
+<span class="sd">        output_dir: Directory where PDF files should be written.</span>
 <span class="sd">        fidelity_field: Summary column used for the fidelity plot.</span>
 
 <span class="sd">    Returns:</span>
@@ -4698,8 +4698,8 @@ link-length sweep plots with elementary link length on the x-axis.</p>
     <span class="n">rows</span> <span class="o">=</span> <span class="n">read_summary_rows</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
     <span class="n">out</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
     <span class="n">out</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">completion_path</span> <span class="o">=</span> <span class="n">out</span> <span class="o">/</span> <span class="s2">&quot;completion_time_by_seed.png&quot;</span>
-    <span class="n">fidelity_path</span> <span class="o">=</span> <span class="n">out</span> <span class="o">/</span> <span class="s2">&quot;average_fidelity_by_seed.png&quot;</span>
+    <span class="n">completion_path</span> <span class="o">=</span> <span class="n">out</span> <span class="o">/</span> <span class="s2">&quot;completion_time_by_seed.pdf&quot;</span>
+    <span class="n">fidelity_path</span> <span class="o">=</span> <span class="n">out</span> <span class="o">/</span> <span class="s2">&quot;average_fidelity_by_seed.pdf&quot;</span>
     <span class="n">_plot_series</span><span class="p">(</span>
         <span class="n">series_by_simulator</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="s2">&quot;completion_time_s&quot;</span><span class="p">),</span>
         <span class="n">completion_path</span><span class="p">,</span>
@@ -4771,7 +4771,7 @@ link-length sweep plots with elementary link length on the x-axis.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Directory where PNG files should be written.</p>
+                <p>Directory where PDF files should be written.</p>
               </div>
             </td>
             <td>
@@ -4893,7 +4893,7 @@ link-length sweep plots with elementary link length on the x-axis.</p>
 
 <span class="sd">    Args:</span>
 <span class="sd">        root: Sweep root to scan for nested summaries and manifests.</span>
-<span class="sd">        output_dir: Directory where PNG files should be written.</span>
+<span class="sd">        output_dir: Directory where PDF files should be written.</span>
 <span class="sd">        fidelity_field: Summary column used for the fidelity plot.</span>
 
 <span class="sd">    Returns:</span>
@@ -4906,8 +4906,8 @@ link-length sweep plots with elementary link length on the x-axis.</p>
     <span class="n">rows</span> <span class="o">=</span> <span class="n">read_sweep_summary_rows</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
     <span class="n">out</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
     <span class="n">out</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">completion_path</span> <span class="o">=</span> <span class="n">out</span> <span class="o">/</span> <span class="s2">&quot;completion_time_by_link_length.png&quot;</span>
-    <span class="n">fidelity_path</span> <span class="o">=</span> <span class="n">out</span> <span class="o">/</span> <span class="s2">&quot;average_fidelity_by_link_length.png&quot;</span>
+    <span class="n">completion_path</span> <span class="o">=</span> <span class="n">out</span> <span class="o">/</span> <span class="s2">&quot;completion_time_by_link_length.pdf&quot;</span>
+    <span class="n">fidelity_path</span> <span class="o">=</span> <span class="n">out</span> <span class="o">/</span> <span class="s2">&quot;average_fidelity_by_link_length.pdf&quot;</span>
     <span class="n">_plot_errorbar_series</span><span class="p">(</span>
         <span class="n">sweep_series_by_simulator</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="s2">&quot;completion_time_s&quot;</span><span class="p">),</span>
         <span class="n">completion_path</span><span class="p">,</span>
