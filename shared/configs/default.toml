@@ -10,10 +10,11 @@ completion_check_interval_s = 0.001
 stop_on_completion = false
 
 [paths]
-# These paths are intentionally configurable so release code does not import
-# from ignored agent assets unless the user explicitly points there.
-sequence_path = ".agents/codebases/SeQUeNCe"
-quantumsavory_path = ".agents/codebases/QuantumSavory.jl"
+# These paths point at the vendored simulator snapshots used for release runs.
+# They remain configurable for reviewers who want to compare against another
+# local simulator checkout.
+sequence_path = "dev/SeQUeNCe"
+quantumsavory_path = "dev/QuantumSavory.jl"
 
 [topology]
 node_names = ["r1", "r2", "r3"]

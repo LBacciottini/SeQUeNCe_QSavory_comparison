@@ -57,7 +57,7 @@ Run a QuantumSavory simulation after developing the local QuantumSavory checkout
 into the Julia environment:
 
 ```bash
-julia --project=julia/SeQUeNCeQSavoryComparison -e 'using Pkg; Pkg.develop(path=".agents/codebases/QuantumSavory.jl"); Pkg.instantiate()'
+julia --project=julia/SeQUeNCeQSavoryComparison -e 'using Pkg; Pkg.develop(path="dev/QuantumSavory.jl"); Pkg.instantiate()'
 julia --project=julia/SeQUeNCeQSavoryComparison scripts/run_qsavory.jl --config shared/configs/default.toml --seed 1 --raw-state-model exact --output outputs/qsavory_exact_seed1
 julia --project=julia/SeQUeNCeQSavoryComparison scripts/run_qsavory.jl --config shared/configs/default.toml --seed 1 --raw-state-model werner --output outputs/qsavory_werner_seed1
 ```
