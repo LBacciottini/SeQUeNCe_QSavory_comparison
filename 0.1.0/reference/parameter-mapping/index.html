@@ -1692,7 +1692,7 @@ convention. A shared range <code>[lo, hi]</code> becomes the predicate:</p>
 </tr>
 <tr>
 <td>BBPSSW purification</td>
-<td><code>BBPSSWProt(sim, net, 1, 3)</code> operates only over candidate endpoint <code>r1-r3</code> pairs using ProtocolZoo tag queries.</td>
+<td><code>BBPSSWProt(sim, net, 1, 3; initial_handshake=true)</code> operates only over candidate endpoint <code>r1-r3</code> pairs using ProtocolZoo tag queries. The initial classical handshake is enabled to match SeQUeNCe's BBPSSW reservation timing.</td>
 </tr>
 <tr>
 <td>Swapping at <code>r2</code></td>

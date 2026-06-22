@@ -1463,8 +1463,8 @@ Edit source docstrings, generator inputs, or this template instead.
 <p>The returned dictionary is written to each QuantumSavory manifest under
   applied_config. It exposes the simulator-specific interpretation of the
   shared config: register sizes, slot reservations, raw-pair state class,
-  EntanglerProt timing/probability, distillation scope, and ideal-swapping
-  policy.</p>
+  EntanglerProt timing/probability, distillation scope and handshake policy,
+  and ideal-swapping policy.</p>
 <p>Arguments
   ≡≡≡≡≡≡≡≡≡</p>
 <pre><code>•  cfg: Shared configuration dictionary.
@@ -1523,9 +1523,11 @@ Edit source docstrings, generator inputs, or this template instead.
   outputs.</p>
 <p>The runner builds a three-register RegisterNet, starts one EntanglerProt per
   reserved memory lane, runs SwapperProt at the middle node, and runs
-  BBPSSWProt only between the end nodes r1 and r3. The elementary entanglers
-  use the shared effective Barrett-Kok attempt time and full-success
-  probability derived from the same configuration used by the SeQUeNCe adapter.</p>
+  BBPSSWProt only between the end nodes r1 and r3. The distiller enables
+  QuantumSavory's initial classical handshake so its BBPSSW reservation timing
+  matches SeQUeNCe. The elementary entanglers use the shared effective
+  Barrett-Kok attempt time and full-success probability derived from the same
+  configuration used by the SeQUeNCe adapter.</p>
 <p>Two raw-state models are supported:</p>
 <pre><code>•  "exact" uses BarrettKokBellPair with the derived optical
    parameters.

@@ -207,6 +207,24 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="." class="md-nav__link md-nav__link--active">
         
   
@@ -223,6 +241,36 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#llm-disclosure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LLM Disclosure
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1114,6 +1162,25 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#llm-disclosure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LLM Disclosure
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1138,6 +1205,15 @@ write the same output schema for seeded statistical comparison.</p>
 <a href="https://sequence-rtd-tutorial.readthedocs.io/stable/tutorial/chapter4/resource_management.html">SeQUeNCe resource-management tutorial</a>:
 a three-router repeater chain with a short <code>r1-r2</code> flow and a long <code>r1-r3</code>
 flow using elementary generation, swapping, and purification.</p>
+<h2 id="llm-disclosure">LLM Disclosure<a class="headerlink" href="#llm-disclosure" title="Permanent link">&para;</a></h2>
+<p>The core QuantumSavory and SeQUeNCe simulations were implemented manually. The
+intellectual design of the physics-specific shared configuration, including the
+choice of physical parameters and the mapping from shared parameters into
+simulator-specific configurations, was also developed manually.</p>
+<p>Codex 0.141.0 was used to wire the shared configuration into reusable adapters,
+wrap the experiment runners, organize seeded batch and sweep execution, collect
+simulation outputs, generate comparison plots, write and expand source
+docstrings, and assemble these documentation pages.</p>
 <p>The documentation is organized with the <a href="https://diataxis.fr">Diátaxis</a> structure:</p>
 <ul>
 <li><strong>Tutorials</strong> teach the workflow through a small guided run.</li>
