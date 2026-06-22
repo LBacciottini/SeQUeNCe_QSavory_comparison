@@ -32,7 +32,7 @@ coherence-time or cutoff-ratio entry.
 | Key | Type | Unit | Required value or constraint | Meaning |
 | --- | --- | --- | --- | --- |
 | `sequence_path` | string | filesystem path | Path must resolve to a SeQUeNCe checkout when running SeQUeNCe. | Optional import path prepended by the Python adapter before importing SeQUeNCe. The release config points at the vendored `dev/SeQUeNCe` snapshot. |
-| `quantumsavory_path` | string | filesystem path | Path must resolve to the local QuantumSavory checkout when instantiating the Julia project. | Documents the intended local QuantumSavory source tree. The Julia package dependency is pinned through the Julia environment; this field is included in the shared config and manifest so reviewers know which local checkout is expected. The release config points at the vendored `dev/QuantumSavory.jl` snapshot. |
+| `quantumsavory_path` | string | filesystem path | Path must resolve to the local QuantumSavory checkout when instantiating the Julia project. | Documents the intended local QuantumSavory source tree. The Julia package dependency is pinned through the Julia environment; this field is included in the shared config and manifest so the expected local checkout is explicit. The release config points at the vendored `dev/QuantumSavory.jl` snapshot. |
 
 ## `[topology]`
 

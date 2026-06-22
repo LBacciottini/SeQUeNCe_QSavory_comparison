@@ -1,5 +1,10 @@
 # Run Simulators
 
+The SeQUeNCe commands assume you have created a conda environment named
+`sequenceEnv` and installed SeQUeNCe together with its Python dependencies in
+that environment. The QuantumSavory commands use the Julia project in this
+repository and the vendored `dev/QuantumSavory.jl` checkout.
+
 ## Run SeQUeNCe
 
 ```bash

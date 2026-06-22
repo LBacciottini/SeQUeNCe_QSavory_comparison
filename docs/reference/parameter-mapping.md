@@ -373,9 +373,9 @@ Current validation status:
   memory contention, and final end-to-end metrics require separate validation
   layers.
 
-## Reviewer Audit Checklist
+## Mapping Checklist
 
-Use this checklist when reviewing a mapping change:
+Use this checklist when changing a mapping:
 
 - Every simulator parameter is traceable to `raw_config` or
   `resolved_config.derived`.

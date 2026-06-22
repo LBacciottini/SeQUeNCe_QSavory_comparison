@@ -5,6 +5,11 @@ SeQUeNCe in Python and QuantumSavory in Julia. Both simulators read the same
 shared hardware configuration, translate it into simulator-specific objects, and
 write the same output schema for seeded statistical comparison.
 
+The experiment implemented here is the
+[SeQUeNCe resource-management tutorial](https://sequence-rtd-tutorial.readthedocs.io/stable/tutorial/chapter4/resource_management.html):
+a three-router repeater chain with a short `r1-r2` flow and a long `r1-r3`
+flow using elementary generation, swapping, and purification.
+
 The documentation is organized with the [Diátaxis](https://diataxis.fr) structure:
 
 - **Tutorials** teach the workflow through a small guided run.
@@ -16,7 +21,7 @@ The documentation is organized with the [Diátaxis](https://diataxis.fr) structu
   interpret the modeling choices.
 
 Start with [First Comparison Run](tutorials/first-comparison.md) if you are new
-to the project. Reviewers should start with the
-[Shared Configuration](reference/configuration.md) and
-[Parameter Mapping](reference/parameter-mapping.md) references, then read the
-[Cross-Validation Model](explanation/cross-validation-model.md).
+to the project. For the experiment contract and simulator mappings, read the
+[Shared Configuration](reference/configuration.md),
+[Parameter Mapping](reference/parameter-mapping.md), and
+[Cross-Validation Model](explanation/cross-validation-model.md) pages.
