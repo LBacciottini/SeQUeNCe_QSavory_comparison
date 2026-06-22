@@ -71,6 +71,7 @@ const WERNER_CASES = joinpath(REPO_ROOT, "shared", "testdata", "werner_protocol_
     @test applied["distillation"]["scope"] == "end_to_end_only"
     @test applied["distillation"]["nodeA"] == "r1"
     @test applied["distillation"]["nodeB"] == "r3"
+    @test applied["distillation"]["initial_handshake"] == true
     @test applied["swapping"]["fidelity_model"] == "ideal"
     @test applied["swapping"]["retry_policy"] == "event_based"
     @test isnothing(applied["swapping"]["retry_lock_time"])

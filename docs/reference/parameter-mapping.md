@@ -292,7 +292,7 @@ Protocol mapping:
 | Elementary links | Three `EntanglerProt` processes: `r1-r2` for `flow1`, `r1-r2` for `flow2` left, and `r2-r3` for `flow2` right. The processes use the compressed short-circuit attempt duration from the shared derived model. |
 | Endpoint metadata | `EntanglementCounterpart` tags store remote node, remote slot, and pair id. |
 | Metadata updates after swapping | `EntanglementTracker` runs on all three nodes so tag updates and deletions propagate. |
-| BBPSSW purification | `BBPSSWProt(sim, net, 1, 3)` operates only over candidate endpoint `r1-r3` pairs using ProtocolZoo tag queries. |
+| BBPSSW purification | `BBPSSWProt(sim, net, 1, 3; initial_handshake=true)` operates only over candidate endpoint `r1-r3` pairs using ProtocolZoo tag queries. The initial classical handshake is enabled to match SeQUeNCe's BBPSSW reservation timing. |
 | Swapping at `r2` | `SwapperProt(sim, net, 2; nodeL=1, nodeH=3, chooseslots=...)` consumes middle-node memories in the reserved left/right ranges. |
 
 The exact Barrett-Kok analytical state is a single-excitation Bell state. For

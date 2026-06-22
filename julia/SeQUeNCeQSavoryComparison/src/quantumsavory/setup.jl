@@ -30,9 +30,11 @@ Run the QuantumSavory analytical-Barrett-Kok implementation and write outputs.
 
 The runner builds a three-register `RegisterNet`, starts one `EntanglerProt`
 per reserved memory lane, runs `SwapperProt` at the middle node, and runs
-`BBPSSWProt` only between the end nodes `r1` and `r3`.  The elementary
-entanglers use the shared effective Barrett-Kok attempt time and full-success
-probability derived from the same configuration used by the SeQUeNCe adapter.
+`BBPSSWProt` only between the end nodes `r1` and `r3`.  The distiller enables
+QuantumSavory's initial classical handshake so its BBPSSW reservation timing
+matches SeQUeNCe.  The elementary entanglers use the shared effective
+Barrett-Kok attempt time and full-success probability derived from the same
+configuration used by the SeQUeNCe adapter.
 
 Two raw-state models are supported:
 
@@ -97,7 +99,7 @@ function run_qsavory(config_path::AbstractString, seed::Integer, output_dir::Abs
     _install_lane_entanglers!(sim, net, 1, 2, flow1["r1_slots"], flow1["r2_slots"], succ, attempt_time, pairstate)
     _install_lane_entanglers!(sim, net, 1, 2, flow2["r1_slots"], flow2["r2_left_slots"], succ, attempt_time, pairstate)
     _install_lane_entanglers!(sim, net, 2, 3, flow2["r2_right_slots"], flow2["r3_slots"], succ, attempt_time, pairstate)
-    @process BBPSSWProt(sim, net, 1, 3; retry_lock_time=nothing)()
+    @process BBPSSWProt(sim, net, 1, 3; retry_lock_time=nothing, initial_handshake=true)()
     swap_slots = slot -> Int(flow2["r2_left_slots"][1]) + 1 <= slot <= Int(flow2["r2_right_slots"][2]) + 1
     swap_busy = Float64(resolved["swapping"]["local_busy_time_s"])
     @process SwapperProt(sim, net, 2; nodeL=1, nodeH=3, chooseslots=swap_slots, retry_lock_time=nothing, local_busy_time=swap_busy)()

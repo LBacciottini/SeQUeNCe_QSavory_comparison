@@ -6,8 +6,8 @@ Return the exact QuantumSavory settings implied by the shared config.
 The returned dictionary is written to each QuantumSavory manifest under
 `applied_config`.  It exposes the simulator-specific interpretation of the
 shared config: register sizes, slot reservations, raw-pair state class,
-EntanglerProt timing/probability, distillation scope, and ideal-swapping
-policy.
+EntanglerProt timing/probability, distillation scope and handshake policy, and
+ideal-swapping policy.
 
 # Arguments
 
@@ -99,6 +99,7 @@ function inspect_qsavory_configuration(cfg; raw_state_model="exact")
             "scope" => "end_to_end_only",
             "nodeA" => "r1",
             "nodeB" => "r3",
+            "initial_handshake" => true,
             "target_fidelity" => resolved["derived"]["target_purification_fidelity"],
             "pair_selection_policy" => resolved["purification"]["pair_selection_policy"],
         ),

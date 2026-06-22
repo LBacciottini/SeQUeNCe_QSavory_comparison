@@ -10,6 +10,18 @@ The experiment implemented here is the
 a three-router repeater chain with a short `r1-r2` flow and a long `r1-r3`
 flow using elementary generation, swapping, and purification.
 
+## LLM Disclosure
+
+The core QuantumSavory and SeQUeNCe simulations were implemented manually. The
+intellectual design of the physics-specific shared configuration, including the
+choice of physical parameters and the mapping from shared parameters into
+simulator-specific configurations, was also developed manually.
+
+Codex 0.141.0 was used to wire the shared configuration into reusable adapters,
+wrap the experiment runners, organize seeded batch and sweep execution, collect
+simulation outputs, generate comparison plots, write and expand source
+docstrings, and assemble these documentation pages.
+
 The documentation is organized with the [Diátaxis](https://diataxis.fr) structure:
 
 - **Tutorials** teach the workflow through a small guided run.
