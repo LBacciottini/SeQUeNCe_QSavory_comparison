@@ -151,6 +151,10 @@ This writes `sweep_comparison.csv`,
 
 ## Documentation
 
+The published documentation is available at:
+
+https://lbacciottini.github.io/SeQUeNCe_QSavory_comparison/
+
 The documentation is organized with the [Diátaxis](https://diataxis.fr)
 structure:
 

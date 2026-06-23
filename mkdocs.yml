@@ -54,6 +54,7 @@ nav:
       - Cross-Validation Model: explanation/cross-validation-model.md
       - Simulator Semantics: explanation/simulator-semantics.md
       - Exact and Werner Models: explanation/exact-and-werner-models.md
+      - Barrett-Kok State Model: explanation/barrett-kok-state.md
       - Diagnostic Methodology: explanation/diagnostic-methodology.md
 
 markdown_extensions:
@@ -61,3 +62,9 @@ markdown_extensions:
   - toc:
       permalink: true
   - pymdownx.superfences
+  - pymdownx.arithmatex:
+      generic: true
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
