@@ -17,6 +17,26 @@ from typing import Iterable
 SUMMARY_GLOB = "*/*/summary.csv"
 SWEEP_SUMMARY_GLOB = "*/*/*/summary.csv"
 DEFAULT_SIMULATOR_ORDER = ("sequence", "qsavory_werner", "qsavory_exact")
+COLORBLIND_PALETTE = (
+    "#0072B2",  # blue
+    "#D55E00",  # vermillion
+    "#009E73",  # bluish green
+    "#CC79A7",  # reddish purple
+    "#E69F00",  # orange
+    "#56B4E9",  # sky blue
+    "#F0E442",  # yellow
+)
+PLOT_STYLE = {
+    "font.size": 14,
+    "axes.titlesize": 16,
+    "axes.labelsize": 15,
+    "xtick.labelsize": 16,
+    "ytick.labelsize": 16,
+    "legend.fontsize": 12,
+    "legend.title_fontsize": 12,
+    "pdf.fonttype": 42,
+    "ps.fonttype": 42,
+}
 
 
 def read_summary_rows(root: str | pathlib.Path) -> list[dict[str, str]]:
@@ -228,7 +248,7 @@ def plot_batch_curves(
         series_by_simulator(rows, fidelity_field),
         fidelity_path,
         ylabel="Average fidelity",
-        title=f"{fidelity_field} by seed",
+        title="Distilled pairs e2e fidelity",
     )
     return {"completion_time": completion_path, "average_fidelity": fidelity_path}
 
@@ -268,7 +288,7 @@ def plot_sweep_curves(
         sweep_series_by_simulator(rows, fidelity_field),
         fidelity_path,
         ylabel="Average fidelity",
-        title=f"{fidelity_field} by link length",
+        title="Distilled pairs e2e fidelity",
     )
     return {"completion_time": completion_path, "average_fidelity": fidelity_path}
 
@@ -361,19 +381,28 @@ def _plot_series(series: dict[str, list[tuple[int, float]]], path: pathlib.Path,
     except ModuleNotFoundError as exc:  # pragma: no cover - depends on local plotting environment
         raise RuntimeError("matplotlib is required to generate plot images") from exc
 
-    fig, ax = plt.subplots(figsize=(8, 4.8))
-    for simulator in _ordered_simulators(series):
+    plt.rcParams.update(PLOT_STYLE)
+    fig, ax = plt.subplots(figsize=(9, 5.4))
+    for index, simulator in enumerate(_ordered_simulators(series)):
         values = series[simulator]
         if not values:
             continue
         seeds = [seed for seed, _value in values]
         ys = [value for _seed, value in values]
-        ax.plot(seeds, ys, marker="o", linewidth=1.8, markersize=3.5, label=simulator)
+        ax.plot(
+            seeds,
+            ys,
+            marker="o",
+            linewidth=2.2,
+            markersize=5.0,
+            color=COLORBLIND_PALETTE[index % len(COLORBLIND_PALETTE)],
+            label=simulator,
+        )
     ax.set_xlabel("Seed")
     ax.set_ylabel(ylabel)
     ax.set_title(title)
     ax.grid(True, alpha=0.3)
-    ax.legend()
+    ax.legend(frameon=False)
     fig.tight_layout()
     path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(path, dpi=180)
@@ -395,20 +424,31 @@ def _plot_errorbar_series(
     except ModuleNotFoundError as exc:  # pragma: no cover - depends on local plotting environment
         raise RuntimeError("matplotlib is required to generate plot images") from exc
 
-    fig, ax = plt.subplots(figsize=(8, 4.8))
-    for simulator in _ordered_simulators(series):
+    plt.rcParams.update(PLOT_STYLE)
+    fig, ax = plt.subplots(figsize=(9, 5.4))
+    for index, simulator in enumerate(_ordered_simulators(series)):
         values = series[simulator]
         if not values:
             continue
         xs = [link_length for link_length, _mean, _ci in values]
         means = [mean for _link_length, mean, _ci in values]
         cis = [ci for _link_length, _mean, ci in values]
-        ax.errorbar(xs, means, yerr=cis, marker="o", linewidth=1.8, markersize=3.5, capsize=3, label=simulator)
+        ax.errorbar(
+            xs,
+            means,
+            yerr=cis,
+            marker="o",
+            linewidth=2.2,
+            markersize=5.0,
+            capsize=4,
+            color=COLORBLIND_PALETTE[index % len(COLORBLIND_PALETTE)],
+            label=simulator,
+        )
     ax.set_xlabel("Elementary link length (km)")
     ax.set_ylabel(ylabel)
     ax.set_title(title)
     ax.grid(True, alpha=0.3)
-    ax.legend()
+    ax.legend(frameon=False)
     fig.tight_layout()
     path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(path, dpi=180)
