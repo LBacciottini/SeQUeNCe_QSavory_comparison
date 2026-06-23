@@ -13,3 +13,4 @@ data/generated/
 output/
 site/
 docs/generated/
+.DS_Store
