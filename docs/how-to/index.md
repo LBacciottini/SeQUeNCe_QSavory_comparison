@@ -7,4 +7,5 @@ want to accomplish.
 - [Run Batches and Sweeps](run-batches-and-sweeps.md)
 - [Generate Plots](generate-plots.md)
 - [Validate Agreement](validate-agreement.md)
+- [Investigate Timing Discrepancies](investigate-timing.md)
 - [Build Documentation](build-docs.md)

@@ -22,7 +22,7 @@ using Statistics
 using TOML
 
 export load_config, resolve_config, derive_parameters, inspect_qsavory_configuration, run_qsavory,
-       elementary_rate_theory, run_qsavory_elementary_trials
+       elementary_rate_theory, run_qsavory_elementary_trials, run_qsavory_diagnostic
 
 include("config.jl")
 include("physics.jl")
@@ -32,5 +32,6 @@ include("quantumsavory/states.jl")
 include("quantumsavory/mapping.jl")
 include("quantumsavory/elementary.jl")
 include("quantumsavory/setup.jl")
+include("diagnostics.jl")
 
 end

@@ -42,6 +42,11 @@ def inspect_sequence_configuration(config: dict[str, Any]) -> dict[str, Any]:
     flow2 = reservation["flow2"]
 
     return {
+        "formalism": {
+            "quantum_manager": "ket_vector",
+            "swapping": "ket_vector_with_ideal_fidelity_update",
+            "purification": "comparison_werner_bbpssw",
+        },
         "memory_counts": {
             "r1": int(memories["r1_count"]),
             "r2": int(memories["r2_count"]),

@@ -7,9 +7,69 @@ the same resource-management semantics.
 
 from __future__ import annotations
 
+import math
 from typing import Any
 
 from .imports import import_sequence
+
+WERNER_BBPSSW_FORMALISM = "comparison_werner_bbpssw"
+
+
+def install_werner_bbpssw_protocol(imports: Any) -> None:
+    """Select the adapter-local analytical Werner BBPSSW protocol.
+
+    SeQUeNCe's stock Bell-diagonal BBPSSW protocol has the desired analytical
+    success probability and output fidelity, but its Bell-diagonal quantum
+    manager is incompatible with the physical Barrett-Kok BSM stack used by
+    this comparison.  This registration keeps the normal SeQUeNCe quantum
+    manager for elementary generation and swapping, while replacing only the
+    purification protocol with a Werner-state analytical update.
+    """
+
+    if WERNER_BBPSSW_FORMALISM not in imports.BBPSSWProtocol.list_protocols():
+        from sequence.entanglement_management.purification.bbpssw_protocol import BBPSSWMessage, BBPSSWMsgType
+
+        class WernerBBPSSW(imports.BBPSSWProtocol):
+            protocol_type = WERNER_BBPSSW_FORMALISM
+
+            def start(self) -> None:
+                super().start()
+                p_success = self.success_probability(self.kept_memo.fidelity, self.meas_memo.fidelity)
+                self._improved_fidelity = self.improved_fidelity(self.kept_memo.fidelity, self.meas_memo.fidelity)
+                p_one = (1 + math.sqrt(max(0.0, 2 * p_success - 1))) / 2
+                self.meas_res = 1 if self.owner.get_generator().random() <= p_one else 0
+                dst = self.kept_memo.entangled_memory["node_id"]
+                message = BBPSSWMessage(
+                    BBPSSWMsgType.PURIFICATION_RES,
+                    self.remote_protocol_name,
+                    meas_res=self.meas_res,
+                    protocol_type=self.protocol_type,
+                )
+                self.owner.send_message(dst, message)
+
+            def received_message(self, src: str, msg: Any) -> None:
+                assert src == self.remote_node_name
+                self.update_resource_manager(self.meas_memo, "RAW")
+                if self.meas_res == msg.meas_res:
+                    self.kept_memo.fidelity = self._improved_fidelity
+                    self.update_resource_manager(self.kept_memo, state="PURIFIED")
+                else:
+                    self.update_resource_manager(self.kept_memo, state="RAW")
+
+            @staticmethod
+            def success_probability(f1: float, f2: float) -> float:
+                x1 = (1 - f1) / 3
+                x2 = (1 - f2) / 3
+                return f1 * f2 + f1 * x2 + x1 * f2 + 5 * x1 * x2
+
+            @staticmethod
+            def improved_fidelity(f1: float, f2: float) -> float:
+                x1 = (1 - f1) / 3
+                x2 = (1 - f2) / 3
+                return (f1 * f2 + x1 * x2) / WernerBBPSSW.success_probability(f1, f2)
+
+        imports.BBPSSWProtocol.register(WERNER_BBPSSW_FORMALISM, WernerBBPSSW)
+    imports.BBPSSWProtocol.set_formalism(WERNER_BBPSSW_FORMALISM)
 
 
 def ep_condition_request(memory_info: Any, manager: Any, args: dict[str, Any]) -> list[Any]:

@@ -32,6 +32,8 @@ class SequenceImports:
         BBPSSWProtocol: SeQUeNCe BBPSSW purification protocol.
         EntanglementSwappingA: Swapping protocol run at the middle router.
         EntanglementSwappingB: Swapping protocol run at endpoint routers.
+        BELL_DIAGONAL_STATE_FORMALISM: SeQUeNCe formalism identifier used for
+            Werner/Bell-diagonal state tracking.
     """
 
     Timeline: Any
@@ -46,6 +48,7 @@ class SequenceImports:
     BBPSSWProtocol: Any
     EntanglementSwappingA: Any
     EntanglementSwappingB: Any
+    BELL_DIAGONAL_STATE_FORMALISM: str
 
 
 def import_sequence(sequence_path: str | None = None) -> SequenceImports:
@@ -85,6 +88,7 @@ def import_sequence(sequence_path: str | None = None) -> SequenceImports:
     from sequence.entanglement_management.generation import EntanglementGenerationA
     from sequence.entanglement_management.purification import BBPSSWProtocol
     from sequence.entanglement_management.swapping import EntanglementSwappingA, EntanglementSwappingB
+    from sequence.constants import BELL_DIAGONAL_STATE_FORMALISM
 
     return SequenceImports(
         Timeline,
@@ -99,6 +103,7 @@ def import_sequence(sequence_path: str | None = None) -> SequenceImports:
         BBPSSWProtocol,
         EntanglementSwappingA,
         EntanglementSwappingB,
+        BELL_DIAGONAL_STATE_FORMALISM,
     )
 
 

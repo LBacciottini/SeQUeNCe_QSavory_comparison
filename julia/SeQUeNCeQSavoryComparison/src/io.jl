@@ -1,4 +1,11 @@
 _json_escape(s::AbstractString) = replace(replace(replace(replace(s, "\\" => "\\\\"), "\"" => "\\\""), "\n" => "\\n"), "\r" => "\\r")
+_csv_cell(value) = begin
+    text = string(value)
+    if occursin(",", text) || occursin("\"", text) || occursin("\n", text) || occursin("\r", text)
+        return "\"" * replace(text, "\"" => "\"\"") * "\""
+    end
+    return text
+end
 
 function _json(io, value)
     if value === nothing
@@ -42,7 +49,7 @@ function _write_pairs_csv(path, rows)
     open(path, "w") do io
         println(io, join(fields, ","))
         for row in rows
-            println(io, join([get(row, field, "") for field in fields], ","))
+            println(io, join([_csv_cell(get(row, field, "")) for field in fields], ","))
         end
     end
 end
@@ -52,7 +59,7 @@ function _write_summary_csv(path, rows)
     open(path, "w") do io
         println(io, join(fields, ","))
         for row in rows
-            println(io, join([get(row, field, "") for field in fields], ","))
+            println(io, join([_csv_cell(get(row, field, "")) for field in fields], ","))
         end
     end
 end
@@ -63,6 +70,32 @@ function _write_elementary_validation_csv(path, rows)
         "timeout_s", "effective_attempt_time_s", "success_probability", "round2_entry_probability",
         "round1_time_s", "round2_time_s", "expected_rate_hz",
         "fidelity", "expected_fidelity",
+    ]
+    open(path, "w") do io
+        println(io, join(fields, ","))
+        for row in rows
+            println(io, join([_csv_cell(get(row, field, "")) for field in fields], ","))
+        end
+    end
+end
+
+function _write_diagnostic_events_csv(path, rows)
+    fields = [
+        "simulator", "seed", "link_length_km", "scenario", "flow", "link",
+        "node", "slot", "stage", "event", "time_s", "pair_id", "details_json",
+    ]
+    open(path, "w") do io
+        println(io, join(fields, ","))
+        for row in rows
+            println(io, join([_csv_cell(get(row, field, "")) for field in fields], ","))
+        end
+    end
+end
+
+function _write_diagnostic_stage_csv(path, rows)
+    fields = [
+        "simulator", "seed", "scenario", "link_length_km", "stage", "event",
+        "count", "first_time_s", "nth_time_s", "mean_interarrival_s", "mean_duration_s",
     ]
     open(path, "w") do io
         println(io, join(fields, ","))

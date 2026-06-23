@@ -17,7 +17,7 @@ from .generation import eg_action_await, eg_action_request, install_eg_rule
 from .imports import import_sequence
 from .mapping import inspect_sequence_configuration
 from .network import build_network
-from .purification import install_end_to_end_ep_rules
+from .purification import install_end_to_end_ep_rules, install_werner_bbpssw_protocol
 from .results import collect_pairs, summary_row
 from .swapping import es_action_a, es_action_b, es_condition_a, es_condition_b
 
@@ -50,6 +50,7 @@ def run_sequence(config: dict[str, Any], seed: int, output_dir: str | pathlib.Pa
 
     resolved = resolve_config(config)
     imports = import_sequence(resolved["paths"].get("sequence_path"))
+    install_werner_bbpssw_protocol(imports)
     timeline, r1, r2, r3 = build_network(resolved, imports, seed)
     flow1 = resolved["resource_reservation"]["flow1"]
     flow2 = resolved["resource_reservation"]["flow2"]

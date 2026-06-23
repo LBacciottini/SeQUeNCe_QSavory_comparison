@@ -8,6 +8,21 @@ function _qsavory_summary_row(simulator_label, seed, runtime_s, pairs, target_pa
     observed_flow2_rows = [row for row in pairs if row["flow"] == "flow2"]
     purified_flow2_rows = [row for row in observed_flow2_rows if get(row, "status", "") == "PURIFIED"]
     completion = ""
+    if target_pairs <= 0
+        return Dict{String,Any}(
+            "simulator" => simulator_label,
+            "seed" => seed,
+            "status" => "completed",
+            "runtime_s" => runtime_s,
+            "completion_time_s" => completion,
+            "target_pairs" => target_pairs,
+            "target_completed" => true,
+            "flow1_delivered" => length(flow1_rows),
+            "flow2_delivered" => length(observed_flow2_rows),
+            "flow1_mean_fidelity" => _mean_fidelity(flow1_rows),
+            "flow2_mean_fidelity" => _mean_fidelity(observed_flow2_rows),
+        )
+    end
     if require_purified_flow2
         required_purified = max(target_pairs - 1, 0)
         target_completed = length(observed_flow2_rows) >= target_pairs && length(purified_flow2_rows) >= required_purified

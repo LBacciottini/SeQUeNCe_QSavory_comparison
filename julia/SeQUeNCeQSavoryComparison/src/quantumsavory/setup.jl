@@ -71,6 +71,10 @@ result["summary"]["simulator"] == "qsavory_exact"
 function run_qsavory(config_path::AbstractString, seed::Integer, output_dir::AbstractString; raw_state_model="exact")
     cfg = load_config(config_path)
     resolved = resolve_config(cfg)
+    return _run_qsavory_resolved(cfg, resolved, seed, output_dir; raw_state_model)
+end
+
+function _run_qsavory_resolved(cfg, resolved, seed::Integer, output_dir::AbstractString; raw_state_model="exact", diagnostic_scenario=nothing)
     model = _normalize_raw_state_model(raw_state_model)
     simulator_label = _qsavory_simulator_label(model)
 
@@ -96,13 +100,22 @@ function run_qsavory(config_path::AbstractString, seed::Integer, output_dir::Abs
 
     succ = derived["barrett_kok_full_success_probability"]
     attempt_time = derived["barrett_kok_effective_attempt_time_s"]
-    _install_lane_entanglers!(sim, net, 1, 2, flow1["r1_slots"], flow1["r2_slots"], succ, attempt_time, pairstate)
-    _install_lane_entanglers!(sim, net, 1, 2, flow2["r1_slots"], flow2["r2_left_slots"], succ, attempt_time, pairstate)
-    _install_lane_entanglers!(sim, net, 2, 3, flow2["r2_right_slots"], flow2["r3_slots"], succ, attempt_time, pairstate)
-    @process BBPSSWProt(sim, net, 1, 3; retry_lock_time=nothing, initial_handshake=true)()
-    swap_slots = slot -> Int(flow2["r2_left_slots"][1]) + 1 <= slot <= Int(flow2["r2_right_slots"][2]) + 1
-    swap_busy = Float64(resolved["swapping"]["local_busy_time_s"])
-    @process SwapperProt(sim, net, 2; nodeL=1, nodeH=3, chooseslots=swap_slots, retry_lock_time=nothing, local_busy_time=swap_busy)()
+    scenario = isnothing(diagnostic_scenario) ? "production" : String(diagnostic_scenario)
+    install_flow1 = isnothing(diagnostic_scenario) || scenario in ("single_lane_elementary", "same_link_multilane", "competing_flows_same_bsm", "full_reduced")
+    install_flow2_left = isnothing(diagnostic_scenario) || scenario in ("competing_flows_same_bsm", "two_link_no_swap", "eg_swap_no_purification", "full_reduced")
+    install_flow2_right = isnothing(diagnostic_scenario) || scenario in ("two_link_no_swap", "eg_swap_no_purification", "full_reduced")
+    install_swap = isnothing(diagnostic_scenario) || scenario in ("eg_swap_no_purification", "full_reduced")
+    install_purification = isnothing(diagnostic_scenario) || (scenario == "full_reduced" && Bool(resolved["purification"]["enabled"]))
+
+    install_flow1 && _install_lane_entanglers!(sim, net, 1, 2, flow1["r1_slots"], flow1["r2_slots"], succ, attempt_time, pairstate)
+    install_flow2_left && _install_lane_entanglers!(sim, net, 1, 2, flow2["r1_slots"], flow2["r2_left_slots"], succ, attempt_time, pairstate)
+    install_flow2_right && _install_lane_entanglers!(sim, net, 2, 3, flow2["r2_right_slots"], flow2["r3_slots"], succ, attempt_time, pairstate)
+    install_purification && @process BBPSSWProt(sim, net, 1, 3; retry_lock_time=nothing, initial_handshake=true)()
+    if install_swap
+        swap_slots = slot -> Int(flow2["r2_left_slots"][1]) + 1 <= slot <= Int(flow2["r2_right_slots"][2]) + 1
+        swap_busy = Float64(resolved["swapping"]["local_busy_time_s"])
+        @process SwapperProt(sim, net, 2; nodeL=1, nodeH=3, chooseslots=swap_slots, retry_lock_time=nothing, local_busy_time=swap_busy)()
+    end
 
     run(sim, Float64(resolved["experiment"]["runtime_s"]))
     pairs = _collect_qsavory_pairs(net, sim, seed, simulator_label, model)
@@ -128,5 +141,5 @@ function run_qsavory(config_path::AbstractString, seed::Integer, output_dir::Abs
         "outputs" => resolved["outputs"],
     )
     write_json(joinpath(output_dir, resolved["outputs"]["manifest_filename"]), manifest)
-    return Dict("manifest" => manifest, "pairs" => pairs, "summary" => summary)
+    return Dict("manifest" => manifest, "pairs" => pairs, "summary" => summary, "net" => net, "sim" => sim)
 end

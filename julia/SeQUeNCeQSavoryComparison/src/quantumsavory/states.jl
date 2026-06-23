@@ -37,7 +37,9 @@ function _collect_qsavory_pairs(net, sim, seed, simulator_label, model)
             catch
                 ""
             end
-            pair_status = !isnothing(query(result.slot, DistilledTag)) ? "PURIFIED" : "ENTANGLED"
+            distilled_tag = query(result.slot, DistilledTag)
+            pair_status = !isnothing(distilled_tag) ? "PURIFIED" : "ENTANGLED"
+            delivery_time_s = isnothing(distilled_tag) ? result.time : max(result.time, distilled_tag.time)
             push!(rows, Dict{String,Any}(
                 "simulator" => simulator_label,
                 "seed" => seed,
@@ -47,7 +49,7 @@ function _collect_qsavory_pairs(net, sim, seed, simulator_label, model)
                 "remote_node" => "r$remote",
                 "remote_slot" => remote_slot,
                 "pair_id" => string(result.tag[4]),
-                "delivery_time_s" => result.time,
+                "delivery_time_s" => delivery_time_s,
                 "fidelity" => fidelity,
                 "status" => pair_status,
             ))

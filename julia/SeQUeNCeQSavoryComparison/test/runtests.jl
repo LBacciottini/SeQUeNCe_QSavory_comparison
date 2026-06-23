@@ -72,6 +72,7 @@ const WERNER_CASES = joinpath(REPO_ROOT, "shared", "testdata", "werner_protocol_
     @test applied["distillation"]["nodeA"] == "r1"
     @test applied["distillation"]["nodeB"] == "r3"
     @test applied["distillation"]["initial_handshake"] == true
+    @test applied["distillation"]["pair_selection_policy"] == "first_available"
     @test applied["swapping"]["fidelity_model"] == "ideal"
     @test applied["swapping"]["retry_policy"] == "event_based"
     @test isnothing(applied["swapping"]["retry_lock_time"])
@@ -84,6 +85,27 @@ const WERNER_CASES = joinpath(REPO_ROOT, "shared", "testdata", "werner_protocol_
     @test applied["entangler"]["lane_counts"]["total"] == 30
     @test !haskey(derived, "attempt_time_s")
     @test !haskey(derived, "attempt_cap_hz")
+
+    single_diag = SeQUeNCeQSavoryComparison._diagnostic_scenario_config(cfg, "single_lane_elementary")
+    @test single_diag["resource_reservation"]["flow1"]["r1_slots"] == [0, 0]
+    @test single_diag["resource_reservation"]["flow2"]["target_pairs"] == 0
+    @test single_diag["purification"]["enabled"] == false
+    swap_diag = SeQUeNCeQSavoryComparison._diagnostic_scenario_config(cfg, "eg_swap_no_purification")
+    @test swap_diag["resource_reservation"]["flow1"]["target_pairs"] == 0
+    @test swap_diag["resource_reservation"]["flow2"]["target_pairs"] > 0
+    @test swap_diag["purification"]["enabled"] == false
+    full_diag = SeQUeNCeQSavoryComparison._diagnostic_scenario_config(cfg, "full_reduced")
+    @test full_diag["resource_reservation"]["flow2"]["target_pairs"] == 2
+    @test full_diag["purification"]["enabled"] == true
+
+    diag_events = [
+        SeQUeNCeQSavoryComparison._diagnostic_event("qsavory_exact", 1, "same_link_multilane", 10.0; stage="pair", event="delivered", time_s=0.1),
+        SeQUeNCeQSavoryComparison._diagnostic_event("qsavory_exact", 1, "same_link_multilane", 10.0; stage="pair", event="delivered", time_s=0.4),
+    ]
+    diag_summary = SeQUeNCeQSavoryComparison._summarize_diagnostic_events(diag_events)
+    @test length(diag_summary) == 1
+    @test diag_summary[1]["count"] == 2
+    @test diag_summary[1]["mean_interarrival_s"] ≈ 0.3
 
     summary = SeQUeNCeQSavoryComparison._qsavory_summary_row(
         "qsavory_exact",
@@ -145,6 +167,25 @@ const WERNER_CASES = joinpath(REPO_ROOT, "shared", "testdata", "werner_protocol_
     @test unpurified_summary["flow2_delivered"] == 3
     @test unpurified_summary["target_completed"] == false
     @test unpurified_summary["completion_time_s"] == ""
+
+    net = QS.RegisterNet([QS.Register(1), QS.Register(1)])
+    sim = QS.get_time_tracker(net)
+    QS.initialize!((net[1][1], net[2][1]), QS.DepolarizedBellPair(1.0))
+    counterpart_id = QS.tag!(net[1][1], QS.EntanglementCounterpart, 2, 1, 101)
+    QS.tag!(net[2][1], QS.EntanglementCounterpart, 1, 1, 101)
+    for node in 1:2
+        QS.@process QS.EntanglementTracker(sim, net, node)()
+    end
+    QS.run(sim, 0.001)
+    counterpart_info = net[1].tag_info[counterpart_id]
+    net[1].tag_info[counterpart_id] = (; tag=counterpart_info.tag, slot=counterpart_info.slot, time=0.1)
+    distilled_id = QS.tag!(net[1][1], QS.DistilledTag)
+    distilled_info = net[1].tag_info[distilled_id]
+    net[1].tag_info[distilled_id] = (; tag=distilled_info.tag, slot=distilled_info.slot, time=0.2)
+    rows = SeQUeNCeQSavoryComparison._collect_qsavory_pairs(net, sim, 9, "qsavory_exact", "exact")
+    @test length(rows) == 1
+    @test rows[1]["status"] == "PURIFIED"
+    @test rows[1]["delivery_time_s"] == 0.2
 end
 
 function _werner_cases()

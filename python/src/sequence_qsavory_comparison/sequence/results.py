@@ -82,6 +82,21 @@ def summary_row(
     observed_flow2 = [p for p in pairs if p["flow"] == "flow2"]
     purified_flow2 = [p for p in observed_flow2 if p.get("status") == "PURIFIED"]
     completion = ""
+    if target_pairs <= 0:
+        target_completed = True
+        return {
+            "simulator": simulator,
+            "seed": seed,
+            "status": status,
+            "runtime_s": runtime_s,
+            "completion_time_s": completion,
+            "target_pairs": target_pairs,
+            "target_completed": target_completed,
+            "flow1_delivered": len(flow1),
+            "flow2_delivered": len(observed_flow2),
+            "flow1_mean_fidelity": statistics.fmean(float(p["fidelity"]) for p in flow1) if flow1 else "",
+            "flow2_mean_fidelity": statistics.fmean(float(p["fidelity"]) for p in observed_flow2) if observed_flow2 else "",
+        }
     if require_purified_flow2:
         required_purified = max(target_pairs - 1, 0)
         target_completed = len(observed_flow2) >= target_pairs and len(purified_flow2) >= required_purified

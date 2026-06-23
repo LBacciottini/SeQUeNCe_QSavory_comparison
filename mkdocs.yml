@@ -28,12 +28,14 @@ nav:
   - Tutorials:
       - Tutorials: tutorials/index.md
       - First Comparison Run: tutorials/first-comparison.md
+      - Run a Diagnostic Campaign: tutorials/diagnostic-campaign.md
   - How-to Guides:
       - How-to Guides: how-to/index.md
       - Run Simulators: how-to/run-simulators.md
       - Run Batches and Sweeps: how-to/run-batches-and-sweeps.md
       - Generate Plots: how-to/generate-plots.md
       - Validate Agreement: how-to/validate-agreement.md
+      - Investigate Timing Discrepancies: how-to/investigate-timing.md
       - Build Documentation: how-to/build-docs.md
       - Running Overview: running.md
   - Reference:
@@ -52,6 +54,7 @@ nav:
       - Cross-Validation Model: explanation/cross-validation-model.md
       - Simulator Semantics: explanation/simulator-semantics.md
       - Exact and Werner Models: explanation/exact-and-werner-models.md
+      - Diagnostic Methodology: explanation/diagnostic-methodology.md
 
 markdown_extensions:
   - admonition

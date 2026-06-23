@@ -239,7 +239,7 @@ Protocol mapping:
 | `flow1` elementary `r1-r2` pairs | Entanglement-generation rules on `r1` and `r2` through midpoint `m12`. |
 | `flow2` left elementary link | Entanglement-generation rules on `r1` and `r2` through `m12`, using `flow2.r1_slots` and `flow2.r2_left_slots`. |
 | `flow2` right elementary link | Entanglement-generation rules on `r2` and `r3` through `m23`, using `flow2.r2_right_slots` and `flow2.r3_slots`. |
-| BBPSSW purification | `BBPSSWProtocol` rules select two same-remote, same-fidelity swapped `r1-r3` memories below `F_target`. No elementary-link memory is eligible for purification. |
+| BBPSSW purification | `BBPSSWProtocol` rules select two same-remote, same-fidelity swapped `r1-r3` memories below `F_target`. Before installing those rules, the adapter registers and selects `comparison_werner_bbpssw`, an adapter-local analytical Werner implementation using SeQUeNCe's BBPSSW protocol interface. This keeps the physical Barrett-Kok generation stack in SeQUeNCe's circuit-compatible quantum manager while giving purification the same Bell-diagonal success probability and output-fidelity equations used by the intended Werner model. No elementary-link memory is eligible for purification. |
 | Swapping at `r2` | `EntanglementSwappingA` consumes one valid left-link and one valid right-link memory at `r2`; endpoint nodes install `EntanglementSwappingB`. |
 | Swap success | `swapping.success_probability` is passed to `EntanglementSwappingA`. |
 | Swap fidelity model | Ideal. The adapter resets SeQUeNCe's circuit-swap `degradation` attribute to `1.0` when that attribute exists, because the comparison does not support non-ideal swap noise. |

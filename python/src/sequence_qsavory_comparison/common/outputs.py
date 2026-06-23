@@ -43,6 +43,36 @@ SUMMARY_FIELDS = (
     "flow2_mean_fidelity",
 )
 
+DIAGNOSTIC_EVENT_FIELDS = (
+    "simulator",
+    "seed",
+    "link_length_km",
+    "scenario",
+    "flow",
+    "link",
+    "node",
+    "slot",
+    "stage",
+    "event",
+    "time_s",
+    "pair_id",
+    "details_json",
+)
+
+DIAGNOSTIC_STAGE_FIELDS = (
+    "simulator",
+    "seed",
+    "scenario",
+    "link_length_km",
+    "stage",
+    "event",
+    "count",
+    "first_time_s",
+    "nth_time_s",
+    "mean_interarrival_s",
+    "mean_duration_s",
+)
+
 
 def utc_now_iso() -> str:
     """Return an ISO-8601 UTC timestamp suitable for manifests.
@@ -114,3 +144,33 @@ def write_summary_csv(path: str | pathlib.Path, rows: Iterable[dict[str, Any]]) 
         writer.writeheader()
         for row in rows:
             writer.writerow({field: row.get(field, "") for field in SUMMARY_FIELDS})
+
+
+def write_diagnostic_events_csv(path: str | pathlib.Path, rows: Iterable[dict[str, Any]]) -> None:
+    """Write timestamped simulator diagnostic events.
+
+    Args:
+        path: Destination CSV path.
+        rows: Event dictionaries keyed by `DIAGNOSTIC_EVENT_FIELDS`.
+    """
+
+    with pathlib.Path(path).open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=DIAGNOSTIC_EVENT_FIELDS)
+        writer.writeheader()
+        for row in rows:
+            writer.writerow({field: row.get(field, "") for field in DIAGNOSTIC_EVENT_FIELDS})
+
+
+def write_diagnostic_stage_csv(path: str | pathlib.Path, rows: Iterable[dict[str, Any]]) -> None:
+    """Write aggregate diagnostic stage metrics.
+
+    Args:
+        path: Destination CSV path.
+        rows: Stage-summary dictionaries keyed by `DIAGNOSTIC_STAGE_FIELDS`.
+    """
+
+    with pathlib.Path(path).open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=DIAGNOSTIC_STAGE_FIELDS)
+        writer.writeheader()
+        for row in rows:
+            writer.writerow({field: row.get(field, "") for field in DIAGNOSTIC_STAGE_FIELDS})

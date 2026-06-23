@@ -11,6 +11,7 @@ from .imports import SequenceImports, _import_sequence
 from .mapping import inspect_sequence_configuration
 from .network import _build_network, _make_router_class
 from .purification import (
+    WERNER_BBPSSW_FORMALISM,
     _ep_action_await,
     _ep_action_request,
     _ep_condition_await,
@@ -18,6 +19,7 @@ from .purification import (
     _ep_match_func,
     _install_end_to_end_ep_rules,
     _install_ep_rule,
+    install_werner_bbpssw_protocol,
 )
 from .results import _collect_pairs, _summary_row
 from .simulation import run_sequence
@@ -31,6 +33,7 @@ from .swapping import (
 
 __all__ = [
     "SequenceImports",
+    "WERNER_BBPSSW_FORMALISM",
     "_build_network",
     "_collect_pairs",
     "_eg_action_await",
@@ -54,5 +57,6 @@ __all__ = [
     "_rule_condition_raw",
     "_summary_row",
     "inspect_sequence_configuration",
+    "install_werner_bbpssw_protocol",
     "run_sequence",
 ]

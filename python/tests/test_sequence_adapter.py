@@ -4,6 +4,8 @@ from types import SimpleNamespace
 
 from sequence_qsavory_comparison.common.config import load_config, resolve_config
 from sequence_qsavory_comparison.sequence.adapter import (
+    WERNER_BBPSSW_FORMALISM,
+    _build_network,
     _ep_action_await,
     _ep_action_request,
     _ep_condition_await,
@@ -12,6 +14,7 @@ from sequence_qsavory_comparison.sequence.adapter import (
     _install_end_to_end_ep_rules,
     _summary_row,
     inspect_sequence_configuration,
+    install_werner_bbpssw_protocol,
 )
 
 
@@ -22,6 +25,9 @@ class SequenceAdapterInspectionTests(unittest.TestCase):
         applied = inspect_sequence_configuration(cfg)
 
         self.assertEqual(applied["memory_counts"]["r1"], cfg["memories"]["r1_count"])
+        self.assertEqual(applied["formalism"]["quantum_manager"], "ket_vector")
+        self.assertEqual(applied["formalism"]["swapping"], "ket_vector_with_ideal_fidelity_update")
+        self.assertEqual(applied["formalism"]["purification"], WERNER_BBPSSW_FORMALISM)
         self.assertEqual(applied["rules"]["flow1_r1_slots"], cfg["resource_reservation"]["flow1"]["r1_slots"])
         self.assertEqual(applied["rules"]["flow2_r2_right_slots"], cfg["resource_reservation"]["flow2"]["r2_right_slots"])
         self.assertEqual(applied["channels"]["classical_delay_ps"], resolved["derived"]["classical_delay_ps"])
@@ -122,6 +128,26 @@ class SequenceAdapterInspectionTests(unittest.TestCase):
 
         self.assertEqual(protocol.degradation, 1.0)
 
+    def test_build_network_leaves_quantum_manager_formalism_compatible_with_barrett_kok(self):
+        cfg = load_config("shared/configs/default.toml")
+        resolved = resolve_config(cfg)
+        imports = _FakeSequenceImports()
+
+        timeline, *_ = _build_network(resolved, imports, seed=3)
+
+        self.assertIsNone(imports.EntanglementSwappingA.formalism)
+        self.assertIsNone(imports.EntanglementSwappingB.formalism)
+        self.assertIsNone(imports.BBPSSWProtocol.formalism)
+        self.assertIsNone(timeline.formalism)
+
+    def test_install_werner_bbpssw_protocol_selects_adapter_protocol(self):
+        imports = _FakeSequenceImports()
+
+        install_werner_bbpssw_protocol(imports)
+
+        self.assertEqual(imports.BBPSSWProtocol.formalism, WERNER_BBPSSW_FORMALISM)
+        self.assertIn(WERNER_BBPSSW_FORMALISM, imports.BBPSSWProtocol.protocols)
+
 
 class _FakeResourceManager:
     def __init__(self):
@@ -149,6 +175,104 @@ class _FakeSwapFactory:
     @staticmethod
     def create(*args, **kwargs):
         return SimpleNamespace(degradation=0.95)
+
+
+class _FakeFormalismFactory:
+    formalism = None
+
+    @classmethod
+    def set_formalism(cls, formalism):
+        cls.formalism = formalism
+
+
+class _FakeBBPSSWFactory(_FakeFormalismFactory):
+    protocols = {WERNER_BBPSSW_FORMALISM}
+
+    @classmethod
+    def list_protocols(cls):
+        return list(cls.protocols)
+
+
+class _FakeTimeline:
+    def __init__(self, stop_time, formalism=None):
+        self.stop_time = stop_time
+        self.formalism = formalism
+
+
+class _FakeMemoryArray:
+    def __init__(self):
+        self.params = {}
+
+    def update_memory_params(self, key, value):
+        self.params[key] = value
+
+
+class _FakeQuantumRouter:
+    def __init__(self, name, timeline, memo_size):
+        self.name = name
+        self.timeline = timeline
+        self.memo_size = memo_size
+        self.protocols = []
+        self._memory_array = _FakeMemoryArray()
+
+    def get_components_by_type(self, component_type):
+        if component_type == "MemoryArray":
+            return [self._memory_array]
+        return []
+
+    def send_qubit(self, dst, photon):
+        return None
+
+    def set_seed(self, seed):
+        self.seed = seed
+
+
+class _FakeBSMNode:
+    def __init__(self, name, timeline, connected_nodes, component_templates=None):
+        self.name = name
+        self.timeline = timeline
+        self.connected_nodes = connected_nodes
+        self.component_templates = component_templates or {}
+
+    def set_seed(self, seed):
+        self.seed = seed
+
+
+class _FakeClassicalChannel:
+    def __init__(self, name, timeline, distance, delay):
+        self.name = name
+
+    def set_ends(self, node, remote_name):
+        return None
+
+
+class _FakeQuantumChannel:
+    def __init__(self, name, timeline, attenuation, distance, frequency):
+        self.name = name
+
+    def set_ends(self, node, remote_name):
+        return None
+
+
+class _FakeSequenceImports:
+    BELL_DIAGONAL_STATE_FORMALISM = "bell_diagonal"
+    Timeline = _FakeTimeline
+    QuantumRouter = _FakeQuantumRouter
+    BSMNode = _FakeBSMNode
+    ClassicalChannel = _FakeClassicalChannel
+    QuantumChannel = _FakeQuantumChannel
+    Rule = _FakeRule
+    ResourceManager = lambda self, node, memory_array_name: _FakeResourceManager()
+    MemoryInfo = object
+    EntanglementGenerationA = object
+    BBPSSWProtocol = _FakeBBPSSWFactory
+    EntanglementSwappingA = type("FakeEntanglementSwappingA", (_FakeFormalismFactory,), {})
+    EntanglementSwappingB = type("FakeEntanglementSwappingB", (_FakeFormalismFactory,), {})
+
+    def __init__(self):
+        self.BBPSSWProtocol.formalism = None
+        self.EntanglementSwappingA.formalism = None
+        self.EntanglementSwappingB.formalism = None
 
 
 def _memory_info(index, state, remote_node, fidelity):
