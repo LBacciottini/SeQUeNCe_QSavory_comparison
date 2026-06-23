@@ -14,7 +14,7 @@
         <link rel="prev" href="../simulator-semantics/">
       
       
-        <link rel="next" href="../diagnostic-methodology/">
+        <link rel="next" href="../barrett-kok-state/">
       
       
         
@@ -1005,6 +1005,8 @@
       
         
       
+        
+      
     
     
     
@@ -1160,6 +1162,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../barrett-kok-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Barrett-Kok State Model
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../diagnostic-methodology/" class="md-nav__link">
         
   
@@ -1227,7 +1257,9 @@
 <p>QuantumSavory is run twice for each seed.</p>
 <p>The <code>qsavory_exact</code> series uses the analytical Barrett-Kok state class. This
 keeps detector efficiency, dark-count probability, arm transmissivity, parity,
-and mode-matching visibility inside the raw state model.</p>
+and mode-matching visibility inside the raw state model.
+The exact density matrix and raw-fidelity formula are derived in
+<a href="../barrett-kok-state/">Barrett-Kok State Model</a>.</p>
 <p>The <code>qsavory_werner</code> series uses a depolarized Bell-pair approximation with the
 same raw fidelity:</p>
 <div class="highlight"><pre><span></span><code>DepolarizedBellPair(; F=derived.barrett_kok_raw_fidelity)
@@ -1289,6 +1321,10 @@ exact Barrett-Kok state model.</p>
     
     
       <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
       
     
   </body>
