@@ -6,6 +6,7 @@ import unittest.mock
 from pathlib import Path
 
 from sequence_qsavory_comparison.common.plotting import (
+    DEFAULT_SIMULATOR_ORDER,
     plot_sweep_curves,
     read_summary_rows,
     read_sweep_summary_rows,
@@ -13,6 +14,7 @@ from sequence_qsavory_comparison.common.plotting import (
     sweep_series_by_simulator,
     write_comparison_csv,
     write_sweep_comparison_csv,
+    _series_style,
 )
 
 
@@ -150,6 +152,11 @@ class PlottingApiTests(unittest.TestCase):
             self.assertEqual(plot.call_count, 2)
             self.assertEqual(paths["completion_time"], root / "plots" / "completion_time_by_link_length.pdf")
             self.assertEqual(paths["average_fidelity"], root / "plots" / "average_fidelity_by_link_length.pdf")
+
+    def test_default_simulator_styles_use_distinct_markers(self):
+        markers = [_series_style(index)["marker"] for index, _simulator in enumerate(DEFAULT_SIMULATOR_ORDER)]
+
+        self.assertEqual(len(markers), len(set(markers)))
 
 
 if __name__ == "__main__":

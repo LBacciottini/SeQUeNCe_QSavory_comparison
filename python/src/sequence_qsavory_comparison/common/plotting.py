@@ -17,6 +17,7 @@ from typing import Iterable
 SUMMARY_GLOB = "*/*/summary.csv"
 SWEEP_SUMMARY_GLOB = "*/*/*/summary.csv"
 DEFAULT_SIMULATOR_ORDER = ("sequence", "qsavory_werner", "qsavory_exact")
+MARKER_SIZE = 7.5
 COLORBLIND_PALETTE = (
     "#0072B2",  # blue
     "#D55E00",  # vermillion
@@ -25,6 +26,15 @@ COLORBLIND_PALETTE = (
     "#E69F00",  # orange
     "#56B4E9",  # sky blue
     "#F0E442",  # yellow
+)
+PLOT_MARKERS = (
+    "o",  # circle
+    "s",  # square
+    "^",  # triangle up
+    "D",  # diamond
+    "v",  # triangle down
+    "P",  # filled plus
+    "X",  # filled x
 )
 PLOT_STYLE = {
     "font.size": 14,
@@ -389,13 +399,14 @@ def _plot_series(series: dict[str, list[tuple[int, float]]], path: pathlib.Path,
             continue
         seeds = [seed for seed, _value in values]
         ys = [value for _seed, value in values]
+        style = _series_style(index)
         ax.plot(
             seeds,
             ys,
-            marker="o",
+            marker=style["marker"],
             linewidth=2.2,
-            markersize=5.0,
-            color=COLORBLIND_PALETTE[index % len(COLORBLIND_PALETTE)],
+            markersize=MARKER_SIZE,
+            color=style["color"],
             label=simulator,
         )
     ax.set_xlabel("Seed")
@@ -433,15 +444,16 @@ def _plot_errorbar_series(
         xs = [link_length for link_length, _mean, _ci in values]
         means = [mean for _link_length, mean, _ci in values]
         cis = [ci for _link_length, _mean, ci in values]
+        style = _series_style(index)
         ax.errorbar(
             xs,
             means,
             yerr=cis,
-            marker="o",
+            marker=style["marker"],
             linewidth=2.2,
-            markersize=5.0,
+            markersize=MARKER_SIZE,
             capsize=4,
-            color=COLORBLIND_PALETTE[index % len(COLORBLIND_PALETTE)],
+            color=style["color"],
             label=simulator,
         )
     ax.set_xlabel("Elementary link length (km)")
@@ -453,3 +465,17 @@ def _plot_errorbar_series(
     path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(path, dpi=180)
     plt.close(fig)
+
+
+def _series_style(index: int) -> dict[str, str]:
+    """Return the color and marker assigned to one plotted simulator series.
+
+    Markers intentionally vary across series so the PDF figures remain
+    distinguishable in grayscale printouts or for readers who cannot rely on
+    color differences alone.
+    """
+
+    return {
+        "color": COLORBLIND_PALETTE[index % len(COLORBLIND_PALETTE)],
+        "marker": PLOT_MARKERS[index % len(PLOT_MARKERS)],
+    }
