@@ -235,6 +235,8 @@
       
         
       
+        
+      
     
     
     
@@ -317,6 +319,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/diagnostic-campaign/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Run a Diagnostic Campaign
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -335,6 +365,8 @@
       
         
           
+        
+      
         
       
         
@@ -502,6 +534,34 @@
     
   
     Validate Agreement
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/investigate-timing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Investigate Timing Discrepancies
   
 
     
@@ -1045,6 +1105,8 @@
       
         
       
+        
+      
     
     
     
@@ -1170,6 +1232,34 @@
     
   
     Exact and Werner Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/diagnostic-methodology/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Diagnostic Methodology
   
 
     
@@ -1549,7 +1639,7 @@ ranges, for example <code>[10, 19]</code> means memory indices <code>10</code> t
 </tr>
 <tr>
 <td>BBPSSW purification</td>
-<td><code>BBPSSWProtocol</code> rules select two same-remote, same-fidelity swapped <code>r1-r3</code> memories below <code>F_target</code>. No elementary-link memory is eligible for purification.</td>
+<td><code>BBPSSWProtocol</code> rules select two same-remote, same-fidelity swapped <code>r1-r3</code> memories below <code>F_target</code>. Before installing those rules, the adapter registers and selects <code>comparison_werner_bbpssw</code>, an adapter-local analytical Werner implementation using SeQUeNCe's BBPSSW protocol interface. This keeps the physical Barrett-Kok generation stack in SeQUeNCe's circuit-compatible quantum manager while giving purification the same Bell-diagonal success probability and output-fidelity equations used by the intended Werner model. No elementary-link memory is eligible for purification.</td>
 </tr>
 <tr>
 <td>Swapping at <code>r2</code></td>
