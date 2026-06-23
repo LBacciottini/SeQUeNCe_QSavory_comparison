@@ -5,6 +5,9 @@ SeQUeNCe in Python and QuantumSavory in Julia. Both simulators read the same
 shared hardware configuration, translate it into simulator-specific objects, and
 write the same output schema for seeded statistical comparison.
 
+The source code, issue tracker, and release history are available in the
+[GitHub repository](https://github.com/LBacciottini/SeQUeNCe_QSavory_comparison).
+
 The experiment implemented here is the
 [SeQUeNCe resource-management tutorial](https://sequence-rtd-tutorial.readthedocs.io/stable/tutorial/chapter4/resource_management.html):
 a three-router repeater chain with a short `r1-r2` flow and a long `r1-r3`
